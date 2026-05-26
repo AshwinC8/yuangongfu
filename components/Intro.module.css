@@ -1,0 +1,65 @@
+.intro {
+  position: relative;
+  overflow: hidden;
+  padding: 96px 0;
+}
+
+.inner {
+  position: relative;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 var(--page-padding-x);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 360px;
+}
+
+/* Decorative side columns — absolutely positioned at the page edges */
+.col {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.col:first-child {
+  left: var(--page-padding-x);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+.col:last-child {
+  right: var(--page-padding-x);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+/* Center content */
+.center {
+  width: 440px;
+  max-width: 100%;
+  text-align: center;
+  z-index: 1;
+  align-self: center;
+}
+
+.heading {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--color-accent);
+  margin: 0;
+}
+
+.body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--color-text);
+  margin: 38px 0 0;
+}
+
+@media (max-width: 900px) {
+  .col { display: none; }
+  .body { line-height: 1.4; }
+}

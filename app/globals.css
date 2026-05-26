@@ -1,0 +1,56 @@
+/* ============================================================
+   DESIGN TOKENS — extracted from the Figma "Desktop - 9" frame
+   ============================================================ */
+:root {
+  /* Colors (from Figma) */
+  --color-bg: #ffffff;
+  --color-text: #000000;
+  --color-accent: #bc0000;       /* red — headings, "book now", section labels */
+  --color-border: #eeeeee;       /* navbar bottom border / grid lines */
+  --color-pill: #d9d9d9;         /* grey placeholder blocks in navbar */
+  --color-text-muted: #6b6560;
+
+  /* Layout (from Figma: 1440 frame, 34px side margins, 79px bar) */
+  --nav-height: 79px;
+  --page-max-width: 1440px;
+  --page-padding-x: 34px;
+
+  /* Type */
+  --font-body: var(--font-albert-sans), system-ui, sans-serif;
+  --font-display: var(--font-outfit-nocrossbar), var(--font-albert-sans), sans-serif;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-padding-x: 20px;
+    --nav-height: 64px;
+  }
+}

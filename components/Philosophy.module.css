@@ -1,0 +1,36 @@
+.philosophy {
+  padding: 100px 0;
+}
+
+.inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--page-padding-x);
+  text-align: center;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 40px;
+}
+
+.quote {
+  margin: 0 0 40px;
+  padding: 0;
+  font-size: clamp(22px, 2.8vw, 32px);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--color-text);
+  font-style: normal;
+}
+
+.body {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--color-text);
+  margin: 0;
+}

@@ -1,0 +1,187 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  transition: box-shadow 0.35s var(--ease);
+}
+
+/* subtle depth once scrolled — design itself is a flat white bar */
+.scrolled {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 var(--page-padding-x);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* ---- Brand wordmark (Figma: black, ~196x21, x=34) ---- */
+.brand {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Plain clickable header text — never recolors or underlines */
+.brand,
+.brand:link,
+.brand:visited,
+.brand:hover,
+.brand:focus,
+.brand:active {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+/* ---- Right cluster: two grey blocks + book now (22px gaps) ---- */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+/* Empty grey placeholder blocks from the design (152x32, #d9d9d9).
+   Put real nav content / links inside these when ready. */
+.pill {
+  width: 152px;
+  height: 32px;
+  background: var(--color-pill);
+  border: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+}
+
+/* ---- "book now" button (135x32, 2px red border, red text) ---- */
+.cta {
+  width: 135px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  border-radius: 0;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.cta:hover {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+/* ---- Mobile (no mobile design supplied — sensible adaptation) ---- */
+.toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  margin: 0 auto;
+  background: var(--color-text);
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+
+.toggleOpen span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.toggleOpen span:nth-child(2) {
+  opacity: 0;
+}
+
+.toggleOpen span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.mobilePanel {
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding: 24px var(--page-padding-x) 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transform: translateY(-12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+
+.mobilePanelOpen {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobilePill {
+  width: 100%;
+  height: 44px;
+  background: var(--color-pill);
+  border: none;
+}
+
+.mobileCta {
+  width: 100%;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .actions {
+    display: none;
+  }
+
+  .toggle {
+    display: flex;
+  }
+}

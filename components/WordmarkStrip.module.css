@@ -1,0 +1,14 @@
+.ch {
+  display: inline;
+  animation: var(--wm-anim, wm-throb-a) var(--wm-dur, 3.4s) ease-in-out infinite;
+  animation-delay: var(--wm-char-delay, 0s);
+  animation-fill-mode: backwards;
+  animation-play-state: var(--wm-play, running);
+}
+
+/* While scrolling: kill every animation completely.
+   "none" frees all clock state (cheaper than "paused").
+   backwards fill-mode means characters snap to wghtMin — no flash on resume. */
+:global(.scrolling) .ch {
+  animation: none;
+}

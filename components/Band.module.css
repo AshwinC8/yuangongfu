@@ -1,0 +1,24 @@
+.wrapper {
+  margin-top: 80px;
+  overflow: hidden;
+}
+
+.thinStrip {
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+.imageStrip {
+  position: relative;
+  width: 100%;
+  height: 259px;
+}
+
+.img {
+  object-fit: cover;
+  object-position: center 15%;
+  filter: grayscale(100%);
+}
