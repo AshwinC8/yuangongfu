@@ -22,12 +22,28 @@ export default function ThrobKeyframe() {
     const peakPct = Math.max(1, Math.round(spread * 50));
     const endPct  = Math.max(2, Math.round(spread * 100));
 
-    const kf = (name: string) =>
-      `@keyframes ${name}{` +
-        `0%{font-variation-settings:'wght' ${wghtMin}}` +
-        `${peakPct}%{font-variation-settings:'wght' ${wghtMax}}` +
-        `${endPct}%,100%{font-variation-settings:'wght' ${wghtMin}}` +
-      `}`;
+    // font-variation-settings can't be GPU-composited: every computed-value
+    // change forces text re-layout + repaint. Quantizing the curve into
+    // discrete stops held by steps(1,end) means layout only fires when the
+    // weight jumps a bucket (~every 20ms mid-spike) instead of every frame,
+    // and not at all during the rest tail. The ease-in-out shape is baked
+    // into the stop values, replacing the smooth timing function.
+    const STEPS = 16; // buckets per rise/fall phase — ~50-unit jumps, imperceptible
+    const span  = wghtMax - wghtMin;
+    const eio   = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+    const stop  = (pct: number, w: number) =>
+      `${+pct.toFixed(3)}%{font-variation-settings:'wght' ${w};animation-timing-function:steps(1,end)}`;
+
+    const kf = (name: string) => {
+      let body = "";
+      for (let k = 0; k < STEPS; k++)
+        body += stop((k / STEPS) * peakPct, Math.round(wghtMin + span * eio(k / STEPS)));
+      body += stop(peakPct, wghtMax);
+      for (let k = 1; k < STEPS; k++)
+        body += stop(peakPct + (k / STEPS) * (endPct - peakPct), Math.round(wghtMax - span * eio(k / STEPS)));
+      body += `${endPct}%,100%{font-variation-settings:'wght' ${wghtMin}}`;
+      return `@keyframes ${name}{${body}}`;
+    };
 
     let styleEl = document.getElementById("wm-kf") as HTMLStyleElement | null;
     if (!styleEl) {

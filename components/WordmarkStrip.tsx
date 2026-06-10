@@ -97,7 +97,16 @@ export default function WordmarkStrip({
     const enabled = config.enabled;
     const spans: React.ReactNode[] = [];
 
-    for (let i = 0; i < rowText.length; i += d) {
+    // Chars past this row's clip window (strip width + its shift) can never be
+    // seen — stop rendering there instead of animating invisible glyphs.
+    // One extra word absorbs the CHAR_W estimate vs. real glyph advances.
+    // Delays still use absolute i, so the wave is identical to the full row.
+    const maxChars = Math.min(
+      rowText.length,
+      Math.ceil(((size?.w ?? 0) + shift) / CHAR_W) + WORD.length
+    );
+
+    for (let i = 0; i < maxChars; i += d) {
       const text = rowText.slice(i, i + d);
       // Use the first char's position for the whole group's delay
       const pos = isLine ? i : (i % WORD.length);
@@ -137,14 +146,15 @@ export default function WordmarkStrip({
     >
       {size && Array.from({ length: numPairs }, (_, i) => {
         const shift = i * CHAR_W;
+        const row   = renderRow(shift); // same element tree for both copies
         return (
           <div key={i} style={{ marginBottom: -10, padding: 0 }}>
             <div style={{ overflow: "hidden", height: ROW_H, marginBottom: -5, padding: 0 }}>
-              {renderRow(shift)}
+              {row}
             </div>
             {/* scaleY(-1) mirrors vertically — each letter sits directly below its counterpart */}
             <div style={{ overflow: "hidden", height: ROW_H, transform: "scaleY(-1)", marginBottom: -5, padding: 0 }}>
-              {renderRow(shift)}
+              {row}
             </div>
           </div>
         );
