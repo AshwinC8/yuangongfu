@@ -3,10 +3,13 @@
 }
 
 .inner {
-  max-width: 720px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
   padding: 0 var(--page-padding-x);
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+  align-items: start;
 }
 
 .label {
@@ -15,7 +18,11 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-accent);
-  margin: 0 0 40px;
+  margin: 0;
+}
+
+.contentCol {
+  max-width: 720px;
 }
 
 .quote {
@@ -33,4 +40,11 @@
   line-height: 1.8;
   color: var(--color-text);
   margin: 0;
+}
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
