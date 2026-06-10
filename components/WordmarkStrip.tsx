@@ -26,9 +26,11 @@ export default function WordmarkStrip({
   const containerRef = useRef<HTMLDivElement>(null);
   // null until the ResizeObserver fires — avoids an initial wrong-size render
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
-  const [visible, setVisible] = useState(false);
   const { config } = useAnimConfig();
 
+  // No visibility pause: strips animate continuously. An IntersectionObserver
+  // pause was removed — its callback lags behind fast scrolls, so strips
+  // arrived visibly frozen. Stepped keyframes keep always-on affordable.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -37,15 +39,8 @@ export default function WordmarkStrip({
       setSize({ w: entry.contentRect.width, h: entry.contentRect.height });
     });
 
-    // Pause animation when scrolled out of view — biggest CPU saving
-    const io = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { rootMargin: "120px" } // start a little early so there's no pop-in
-    );
-
     ro.observe(el);
-    io.observe(el);
-    return () => { ro.disconnect(); io.disconnect(); };
+    return () => ro.disconnect();
   }, []);
 
   const ROW_H  = fontSize;
@@ -136,8 +131,16 @@ export default function WordmarkStrip({
       style={{
         // --wm-dur overrides the global fallback for this strip specifically
         "--wm-dur": `${stripDur}s`,
-        "--wm-play": visible ? "running" : "paused",
         contain: "layout style paint",
+        // Off-screen strips (incl. the 2 invisible page copies — 18 strips
+        // total!) skip layout+paint entirely. Unlike an observer-based pause
+        // this is engine-managed per frame, and the animation clock is global,
+        // so strips scroll into view mid-animation — never visibly frozen.
+        contentVisibility: "auto",
+        // Own compositor layer: strip repaints (weight bucket jumps) must not
+        // dirty the scrolling track's tiles, or we re-raster the moving layer
+        // mid-scroll. Isolated here, the track stays a pure GPU slide.
+        willChange: "transform",
         width,
         ...(height !== undefined && { height }),
         overflow: "hidden",

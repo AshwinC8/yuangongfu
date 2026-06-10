@@ -28,7 +28,7 @@ export default function ThrobKeyframe() {
     // weight jumps a bucket (~every 20ms mid-spike) instead of every frame,
     // and not at all during the rest tail. The ease-in-out shape is baked
     // into the stop values, replacing the smooth timing function.
-    const STEPS = 16; // buckets per rise/fall phase — ~50-unit jumps, imperceptible
+    const STEPS = 12; // buckets per rise/fall phase — ~67-unit jumps every ~27ms, still smoother than film
     const span  = wghtMax - wghtMin;
     const eio   = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
     const stop  = (pct: number, w: number) =>

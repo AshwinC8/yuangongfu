@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(python -c ' *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "WebFetch(domain:redis.agency)",
+      "mcp__puppeteer__puppeteer_navigate",
+      "mcp__puppeteer__puppeteer_evaluate"
     ]
   }
 }

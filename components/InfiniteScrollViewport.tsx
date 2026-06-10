@@ -13,8 +13,12 @@ import { ScrollContext, type ScrollSubscriber, type ScrollState } from "@/lib/sc
 
 type Props = {
   numCopies?: number;
-  /** Smoothing factor (0..1). Higher = snappier. */
-  ease?: number;
+  /**
+   * Smoothing time constant in ms — how long the scroll takes to close ~63%
+   * of the gap to its target. Time-based so the feel is identical on a 60 Hz
+   * Windows monitor and a 120 Hz MacBook. 120ms matches the old ease=0.13.
+   */
+  smoothing?: number;
   children: ReactNode;
   /** Rendered on top of the track — use for Navbar and other fixed UI. */
   overlay?: ReactNode;
@@ -22,7 +26,7 @@ type Props = {
 
 export default function InfiniteScrollViewport({
   numCopies = 3,
-  ease = 0.13,
+  smoothing = 120,
   children,
   overlay,
 }: Props) {
@@ -37,6 +41,7 @@ export default function InfiniteScrollViewport({
   const targetScroll   = useRef(0);
   const lastScroll     = useRef(0);
   const velocity       = useRef(0);
+  const fling          = useRef(0); // touch momentum, px/ms
   const subscribersRef = useRef<Set<ScrollSubscriber>>(new Set());
 
   // Read height synchronously before the browser paints.
@@ -96,13 +101,41 @@ export default function InfiniteScrollViewport({
     const track = trackRef.current;
     if (!wrap || !track) return;
 
-    let rafId = 0;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    function tick() {
+    let rafId   = 0;
+    let running = false;
+    let lastT   = -1;
+
+    // The loop only runs while there's distance left to cover; it stops when
+    // scroll settles and any input wakes it. Idle cost: zero.
+    function wake() {
+      if (running) return;
+      running = true;
+      lastT   = -1;
+      rafId   = requestAnimationFrame(tick);
+    }
+
+    function tick(now: number) {
+      const dt = lastT < 0 ? 16.7 : Math.min(64, now - lastT); // clamp tab-switch gaps
+      lastT = now;
+
       const cs = currentScroll;
       const ts = targetScroll;
 
-      cs.current += (ts.current - cs.current) * ease;
+      // Touch momentum — decays like a native iOS fling.
+      if (fling.current !== 0) {
+        ts.current += fling.current * dt;
+        fling.current *= Math.exp(-dt / 500);
+        if (Math.abs(fling.current) < 0.005) fling.current = 0;
+      }
+
+      // Framerate-independent exponential smoothing: same feel at any Hz.
+      const k = reduced ? 1 : 1 - Math.exp(-dt / smoothing);
+      cs.current += (ts.current - cs.current) * k;
+
+      const settled = fling.current === 0 && Math.abs(ts.current - cs.current) < 0.05;
+      if (settled) cs.current = ts.current; // snap the sub-pixel remainder
 
       // Teleport — keep within [0.5 × pageHeight, 1.5 × pageHeight].
       // Shift both refs to preserve momentum across the seam.
@@ -117,11 +150,17 @@ export default function InfiniteScrollViewport({
         lastScroll.current -= pageHeight;
       }
 
-      const rawV = cs.current - lastScroll.current;
+      // Velocity in px per 60Hz-frame, independent of actual refresh rate.
+      const rawV = (cs.current - lastScroll.current) * (16.7 / dt);
       lastScroll.current = cs.current;
-      velocity.current   = velocity.current * 0.85 + rawV * 0.15;
+      const vAlpha = 1 - Math.exp(-dt / 100);
+      velocity.current = settled ? 0 : velocity.current + (rawV - velocity.current) * vAlpha;
 
-      track!.style.transform = `translate3d(0, ${-cs.current}px, 0)`;
+      // Snap to device pixels — fractional offsets force the GPU to resample
+      // the whole visible layer every frame and make text shimmer.
+      const dpr = window.devicePixelRatio || 1;
+      const y   = Math.round(cs.current * dpr) / dpr;
+      track!.style.transform = `translate3d(0, ${-y}px, 0)`;
 
       const localScroll = ((cs.current % pageHeight) + pageHeight) % pageHeight;
       const copyIndex   = Math.floor(cs.current / pageHeight);
@@ -134,40 +173,94 @@ export default function InfiniteScrollViewport({
       };
 
       subscribersRef.current.forEach(cb => cb(state));
+
+      if (settled) { running = false; return; }
       rafId = requestAnimationFrame(tick);
     }
 
     function onWheel(e: WheelEvent) {
+      if (e.ctrlKey) return; // pinch-zoom gesture on precision touchpads — don't hijack
       e.preventDefault();
-      targetScroll.current += e.deltaY;
+      let dy = e.deltaY;
+      if      (e.deltaMode === 1) dy *= 16;                 // lines → px (Firefox wheel)
+      else if (e.deltaMode === 2) dy *= window.innerHeight; // pages → px
+      dy = Math.max(-500, Math.min(500, dy));               // tame driver spikes
+      targetScroll.current += dy;
+      fling.current = 0; // wheel input cancels any touch momentum
+      wake();
     }
 
+    // Touch: drag maps 1.5× to scroll; on release the smoothed finger
+    // velocity becomes a decaying fling so flicks feel native on iOS.
     let touchY: number | null = null;
-    function onTouchStart(e: TouchEvent) { touchY = e.touches[0].clientY; }
+    let touchV = 0; // px/ms, smoothed
+    let touchT = 0;
+
+    function onTouchStart(e: TouchEvent) {
+      touchY = e.touches[0].clientY;
+      touchV = 0;
+      touchT = e.timeStamp;
+      fling.current = 0; // grabbing the page stops the current fling
+    }
     function onTouchMove(e: TouchEvent) {
       if (touchY === null) return;
       e.preventDefault();
       const newY = e.touches[0].clientY;
-      targetScroll.current += (touchY - newY) * 1.5;
+      const dy   = (touchY - newY) * 1.5;
+      const dt   = Math.max(1, e.timeStamp - touchT);
+      targetScroll.current += dy;
+      touchV = touchV * 0.7 + (dy / dt) * 0.3;
       touchY = newY;
+      touchT = e.timeStamp;
+      wake();
     }
-    function onTouchEnd() { touchY = null; }
+    function onTouchEnd(e: TouchEvent) {
+      touchY = null;
+      // Fling only if the finger was still moving when it lifted.
+      if (!reduced && e.timeStamp - touchT < 80) fling.current = touchV;
+      touchV = 0;
+      wake();
+    }
+
+    function onKey(e: KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
+
+      const page = window.innerHeight * 0.9;
+      let dy = 0;
+      switch (e.key) {
+        case "ArrowDown": dy = 80;    break;
+        case "ArrowUp":   dy = -80;   break;
+        case "PageDown":  dy = page;  break;
+        case "PageUp":    dy = -page; break;
+        case " ":         dy = e.shiftKey ? -page : page; break;
+        default: return;
+      }
+      e.preventDefault();
+      fling.current = 0;
+      targetScroll.current += dy;
+      wake();
+    }
 
     wrap.addEventListener("wheel",      onWheel,      { passive: false });
     wrap.addEventListener("touchstart", onTouchStart, { passive: true  });
     wrap.addEventListener("touchmove",  onTouchMove,  { passive: false });
     wrap.addEventListener("touchend",   onTouchEnd);
+    window.addEventListener("keydown",  onKey);
 
-    rafId = requestAnimationFrame(tick);
+    wake(); // one pass to paint the measured position, then it idles
 
     return () => {
+      running = false;
       cancelAnimationFrame(rafId);
       wrap.removeEventListener("wheel",      onWheel);
       wrap.removeEventListener("touchstart", onTouchStart);
       wrap.removeEventListener("touchmove",  onTouchMove);
       wrap.removeEventListener("touchend",   onTouchEnd);
+      window.removeEventListener("keydown",  onKey);
     };
-  }, [pageHeight, ease]);
+  }, [pageHeight, smoothing]);
 
   return (
     <ScrollContext.Provider value={contextValue}>
