@@ -6,15 +6,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./WordmarkStrip.module.css";
 import { useAnimConfig } from "./AnimConfigContext";
+import About from "./About";
 
 type Props = {
   width?: number | string;
   height?: number | string; // omit to let a CSS class control height
   fontSize?: number;
   className?: string;
+  section?: string;
 };
 
-const WORD    = "YUANGONGFU";
+const WORD = "YUANGONGFU";
 const ROW_GAP = 3;
 
 export default function WordmarkStrip({
@@ -22,6 +24,7 @@ export default function WordmarkStrip({
   height,
   fontSize = 32,
   className,
+  section = "default"
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   // null until the ResizeObserver fires — avoids an initial wrong-size render
@@ -43,19 +46,23 @@ export default function WordmarkStrip({
     return () => ro.disconnect();
   }, []);
 
-  const ROW_H  = fontSize;
+  const ROW_H = fontSize;
   const CHAR_W = Math.round(fontSize * 0.72);
-  const pairH  = (ROW_H + ROW_GAP) * 2;
+  const pairH = (ROW_H + ROW_GAP) * 2;
 
   // Derive row geometry only once the container is measured
   const { numPairs, rowText, stripDur } = useMemo(() => {
     if (!size) return { numPairs: 0, rowText: "", stripDur: 3.4 };
 
-    const numPairs    = Math.ceil(size.h / pairH) + 2;
-    const maxShift    = numPairs * CHAR_W;
-    const wordW       = CHAR_W * WORD.length;
+    const numPairs = Math.ceil(size.h / pairH) + 4;
+    if (section && section === "About") {
+      console.log(section);
+      console.log(size.h / pairH);
+    }
+    const maxShift = numPairs * CHAR_W;
+    const wordW = CHAR_W * WORD.length;
     const wordsPerRow = Math.ceil((size.w + maxShift) / wordW) + 3;
-    const rowText     = Array.from({ length: wordsPerRow }, () => WORD).join("");
+    const rowText = Array.from({ length: wordsPerRow }, () => WORD).join("");
 
     // Each strip owns its cycle length:
     //   word mode → always 9-position stagger (one YUANGONGFU)
@@ -63,11 +70,11 @@ export default function WordmarkStrip({
     // maxPos is in groups (density chars each), matching renderRow's per-group delays.
     const d = Math.max(1, Math.round(config.density));
     const numGroups = Math.ceil(rowText.length / d);
-    const maxPos  = config.mode === "line" ? numGroups - 1 : Math.ceil(9 / d);
+    const maxPos = config.mode === "line" ? numGroups - 1 : Math.ceil(9 / d);
     const stripDur = config.spikeDur + config.rest + config.stagger * maxPos;
 
     return { numPairs, rowText, stripDur };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [size, config, pairH, CHAR_W]);
 
   const rowStyle: React.CSSProperties = {
@@ -87,8 +94,8 @@ export default function WordmarkStrip({
   // line: delay is absolute position → one wave travels the full row left to right.
   // density: N chars share one span → reduces animated element count by Nx.
   function renderRow(shift: number) {
-    const isLine  = config.mode === "line";
-    const d       = Math.max(1, Math.round(config.density));
+    const isLine = config.mode === "line";
+    const d = Math.max(1, Math.round(config.density));
     const enabled = config.enabled;
     const spans: React.ReactNode[] = [];
 
@@ -149,7 +156,7 @@ export default function WordmarkStrip({
     >
       {size && Array.from({ length: numPairs }, (_, i) => {
         const shift = i * CHAR_W;
-        const row   = renderRow(shift); // same element tree for both copies
+        const row = renderRow(shift); // same element tree for both copies
         return (
           <div key={i} style={{ marginBottom: -10, padding: 0 }}>
             <div style={{ overflow: "hidden", height: ROW_H, marginBottom: -5, padding: 0 }}>
