@@ -54,7 +54,7 @@ export default function WordmarkStrip({
   const { numPairs, rowText, stripDur } = useMemo(() => {
     if (!size) return { numPairs: 0, rowText: "", stripDur: 3.4 };
 
-    const numPairs = Math.ceil(size.h / pairH) + 4;
+    const numPairs = Math.ceil(size.h / pairH) + 5;
     if (section && section === "About") {
       console.log(section);
       console.log(size.h / pairH);
