@@ -1,6 +1,7 @@
 import styles from "./Enterprise.module.css";
 import LoopDelayVideo from "./LoopDelayVideo";
 import WordmarkStrip from "./WordmarkStrip";
+import { CLASS_BOOKING_URL } from "@/lib/links";
 
 export default function Enterprise() {
   return (
@@ -40,7 +41,12 @@ export default function Enterprise() {
               workplace.
             </p>
           </div>
-          <a href="#book" className={styles.cta}>
+          <a
+            href={CLASS_BOOKING_URL}
+            className={styles.cta}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             book your free consultation
           </a>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { CLASS_BOOKING_URL } from "@/lib/links";
 import styles from "./Hero.module.css";
 
 // All four panels share the SAME source clip, each cropped to fill its panel
@@ -17,16 +18,18 @@ const LOOP_DELAY_MS = 2000;
 const DRIFT_TOLERANCE_S = 0.3;
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   // One master clock drives all four panels. Every frame we compute where each
   // clip *should* be (cycle = clip length + LOOP_DELAY_MS, panel i offset by
-  // i * STAGGER_MS) and correct only on real drift. Because the schedule is
-  // re-derived from performance.now() each frame, it self-heals after the
-  // browser throttles timers/video on background-tab or scroll — the 0.5s
-  // stagger can no longer collapse into sync.
+  // i * STAGGER_MS) and correct only on real drift, so the 0.5s stagger never
+  // collapses into sync. The loop only runs while the hero is on/near screen:
+  // the infinite-scroll track renders three Heroes, so pausing the offscreen
+  // copies keeps their per-frame seeks/decode from fighting the scroll.
   useEffect(() => {
     let raf = 0;
+    let running = false;
     let startMs = 0;
     let clipMs = 0;
     let periodMs = 0;
@@ -48,7 +51,7 @@ export default function Hero() {
             if (Math.abs(v.currentTime - target) > DRIFT_TOLERANCE_S) {
               v.currentTime = target;
             }
-            if (v.paused) v.play().catch(() => {});
+            if (v.paused) v.play().catch(() => { });
           } else if (!v.paused) {
             // In the delay gap — hold on the last frame.
             v.pause();
@@ -56,6 +59,20 @@ export default function Hero() {
         });
       }
       raf = requestAnimationFrame(tick);
+    };
+
+    const startLoop = () => {
+      if (running) return;
+      running = true;
+      raf = requestAnimationFrame(tick);
+    };
+    const stopLoop = () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(raf);
+      videoRefs.current.forEach((v) => {
+        if (v && !v.paused) v.pause();
+      });
     };
 
     const first = videoRefs.current[0];
@@ -67,16 +84,27 @@ export default function Hero() {
     if (first && first.readyState >= 1 && first.duration) begin();
     else first?.addEventListener("loadedmetadata", begin);
 
-    raf = requestAnimationFrame(tick);
+    // Run the scheduler only while this copy is on/near screen. rootMargin gives
+    // a head start so the clips are already moving by the time it scrolls in.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) startLoop();
+        else stopLoop();
+      },
+      { rootMargin: "200px 0px" },
+    );
+    const section = sectionRef.current;
+    if (section) io.observe(section);
 
     return () => {
+      io.disconnect();
       cancelAnimationFrame(raf);
       first?.removeEventListener("loadedmetadata", begin);
     };
   }, []);
 
   return (
-    <section className={styles.hero} aria-label="Intro">
+    <section ref={sectionRef} data-section="home" className={styles.hero} aria-label="Intro">
       <div className={styles.inner}>
         <div className={styles.panels}>
           {PANELS.map((_, i) => (
@@ -110,7 +138,12 @@ export default function Hero() {
             <br />
             reveals the self.
           </p>
-          <a href="#book" className={styles.cta}>
+          <a
+            href={CLASS_BOOKING_URL}
+            className={styles.cta}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             book your free consultation
           </a>
         </div>

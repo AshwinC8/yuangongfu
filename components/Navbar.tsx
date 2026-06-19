@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useScrollContext } from "@/lib/scroll-context";
+import { CLASS_BOOKING_URL } from "@/lib/links";
 import styles from "./Navbar.module.css";
 
 const NAV_LINKS = [
@@ -34,9 +35,15 @@ export default function Navbar() {
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.inner}>
-        <a href="#" className={styles.brand} aria-label="Yuan Gong Fu home">
-          YUANGONGFU
-        </a>
+        <button
+          type="button"
+          className={styles.brand}
+          aria-label="Yuan Gong Fu home"
+          onClick={() => scrollToSection("home")}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/icons/header%20yuangongfu.svg" alt="YUANGONGFU" />
+        </button>
 
         {/* Right cluster — matches Figma: 2 grey blocks + book now */}
         <div className={styles.actions}>
@@ -53,7 +60,12 @@ export default function Navbar() {
             ))}
           </nav>
 
-          <a href="#book" className={styles.cta}>
+          <a
+            href={CLASS_BOOKING_URL}
+            className={styles.cta}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             book now
           </a>
         </div>
@@ -92,7 +104,13 @@ export default function Navbar() {
             </button>
           ))}
         </nav>
-        <a href="#book" className={styles.mobileCta} onClick={() => setMenuOpen(false)}>
+        <a
+          href={CLASS_BOOKING_URL}
+          className={styles.mobileCta}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setMenuOpen(false)}
+        >
           book now
         </a>
       </div>

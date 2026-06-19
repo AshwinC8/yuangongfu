@@ -5,23 +5,26 @@ import { useEffect, useRef } from "react";
 type Props = {
   src: string;
   className?: string;
-  /** Pause between the end of one play-through and the start of the next. */
+  /**
+   * Pause between the end of one play-through and the start of the next.
+   * 0 (default) = seamless continuous loop via the native `loop` attribute.
+   */
   delayMs?: number;
   "aria-label"?: string;
 };
 
-// Plays a muted clip once, holds on its last frame for `delayMs`, then restarts.
-// (No native `loop` — we wait for `ended`, pause, then replay.)
+// delayMs > 0: plays once, holds on the last frame for delayMs, then restarts.
+// delayMs <= 0: native `loop` — a gapless, JS-free continuous loop.
 export default function LoopDelayVideo({
   src,
   className,
-  // Short pause so the clip restarts promptly (hero keeps its own longer timing).
-  delayMs = 750,
+  delayMs = 0,
   "aria-label": ariaLabel,
 }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    if (delayMs <= 0) return; // continuous loop handled by the `loop` attribute
     const v = ref.current;
     if (!v) return;
     let timer = 0;
@@ -45,6 +48,7 @@ export default function LoopDelayVideo({
       src={src}
       autoPlay
       muted
+      loop={delayMs <= 0}
       playsInline
       preload="auto"
       aria-label={ariaLabel}

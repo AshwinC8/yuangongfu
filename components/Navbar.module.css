@@ -29,27 +29,20 @@
   gap: 24px;
 }
 
-/* ---- Brand wordmark (Figma: black, ~196x21, x=34) ---- */
+/* ---- Brand wordmark logo (SVG, ~196x21) ---- */
 .brand {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 26px;
-  line-height: 1;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
 }
 
-/* Plain clickable header text — never recolors or underlines */
-.brand,
-.brand:link,
-.brand:visited,
-.brand:hover,
-.brand:focus,
-.brand:active {
-  color: var(--color-text);
-  text-decoration: none;
+.brand img {
+  height: 20px;
+  width: auto;
+  display: block;
 }
 
 /* ---- Right cluster: two grey blocks + book now (22px gaps) ---- */
@@ -63,7 +56,7 @@
 .navLinks {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 34px;
 }
 
 .navLink {

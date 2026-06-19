@@ -1,3 +1,4 @@
+import { CONTACT_MAILTO, CLASS_BOOKING_URL } from "@/lib/links";
 import styles from "./LetsBegin.module.css";
 
 // TEMP section — sits between Philosophy and About. Built from the "Group 46"
@@ -25,7 +26,12 @@ export default function LetsBegin() {
                 Saturday: 17:00&ndash;18:30
               </p>
             </div>
-            <a href="#book" className={styles.cta}>
+            <a
+              href={CLASS_BOOKING_URL}
+              className={styles.cta}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               book now
             </a>
           </div>
@@ -40,7 +46,7 @@ export default function LetsBegin() {
                 individual experience and needs.
               </p>
             </div>
-            <a href="#contact" className={styles.cta}>
+            <a href={CONTACT_MAILTO} className={styles.cta}>
               contact me
             </a>
           </div>
