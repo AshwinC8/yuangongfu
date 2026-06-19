@@ -2,9 +2,9 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useScrollContext } from "@/lib/scroll-context";
-import { CONTACT_MAILTO, CLASS_BOOKING_URL } from "@/lib/links";
+import { CONTACT_EMAIL, CLASS_BOOKING_URL } from "@/lib/links";
 import WordmarkStrip from "./WordmarkStrip";
-import PhoneCopy from "./PhoneCopy";
+import CopyContact from "./CopyContact";
 import styles from "./Footer.module.css";
 
 type FooterItem = {
@@ -44,17 +44,15 @@ export default function Footer() {
   const { scrollToSection } = useScrollContext();
 
   return (
-    <footer className={styles.footer}>
+    <footer data-section="contact" className={styles.footer}>
       <WordmarkStrip width="100%" height={110} className={styles.strip} />
 
       <div className={styles.inner}>
-        {/* Contact icons */}
+        {/* Contact icons — click to copy, value shown in a popup above the icon */}
         <div className={styles.contact}>
           {/* Placeholder number — swap for the real one. */}
-          <PhoneCopy number="+41 21 555 01 23" />
-          <a href={CONTACT_MAILTO} className={styles.contactIcon} aria-label="Email us">
-            <img src="/icons/Email.svg" alt="" />
-          </a>
+          <CopyContact icon="/icons/Phone.svg" value="+41 21 555 01 23" label="phone number" />
+          <CopyContact icon="/icons/Email.svg" value={CONTACT_EMAIL} label="email address" />
         </div>
 
         {/* Link columns */}
@@ -107,7 +105,14 @@ export default function Footer() {
         {/* Copyright */}
         <p className={styles.copy}>
           &copy; {new Date().getFullYear()} YUAN GONG FU. ALL RIGHTS RESERVED. DESIGNED BY{" "}
-          <span className={styles.designer}>STARDUSTCONCEPT</span>
+          <a
+            href="https://stardustconcept.com/"
+            className={styles.designer}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            STARDUSTCONCEPT
+          </a>
         </p>
       </div>
 

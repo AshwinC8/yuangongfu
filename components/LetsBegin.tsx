@@ -1,9 +1,14 @@
-import { CONTACT_MAILTO, CLASS_BOOKING_URL } from "@/lib/links";
+"use client";
+
+import { useScrollContext } from "@/lib/scroll-context";
+import { CLASS_BOOKING_URL } from "@/lib/links";
 import styles from "./LetsBegin.module.css";
 
 // TEMP section — sits between Philosophy and About. Built from the "Group 46"
 // design mock; swap content / remove once the final section is ready.
 export default function LetsBegin() {
+  const { scrollToSection } = useScrollContext();
+
   return (
     <section data-section="begin" className={styles.section} aria-label="Let's Begin">
       <div className={styles.inner}>
@@ -46,9 +51,13 @@ export default function LetsBegin() {
                 individual experience and needs.
               </p>
             </div>
-            <a href={CONTACT_MAILTO} className={styles.cta}>
+            <button
+              type="button"
+              className={styles.cta}
+              onClick={() => scrollToSection("contact")}
+            >
               contact me
-            </a>
+            </button>
           </div>
         </div>
       </div>

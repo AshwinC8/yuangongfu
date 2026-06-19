@@ -44,13 +44,13 @@
   display: block;
 }
 
-/* ── Phone number popup (above the phone icon, on hover/focus) ── */
-.phoneWrap {
+/* ── Copy popup (above a phone/email icon, on hover/focus) ── */
+.copyWrap {
   position: relative;
   display: inline-flex;
 }
 
-.phonePopup {
+.copyPopup {
   position: absolute;
   bottom: calc(100% + 10px);
   left: 50%;
@@ -69,7 +69,7 @@
 }
 
 /* little downward arrow */
-.phonePopup::after {
+.copyPopup::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -79,8 +79,8 @@
   border-top-color: var(--color-text);
 }
 
-.phoneWrap:hover .phonePopup,
-.phoneWrap:focus-within .phonePopup {
+.copyWrap:hover .copyPopup,
+.copyWrap:focus-within .copyPopup {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
@@ -163,6 +163,12 @@
 .designer {
   font-weight: 700;
   color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+
+.designer:hover {
+  color: var(--color-accent);
 }
 
 /* ── Brand mark + giant wordmark ── */

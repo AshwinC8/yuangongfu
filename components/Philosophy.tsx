@@ -11,7 +11,9 @@ export default function Philosophy() {
             <br />This path is not suitable for everyone.
           </p>
           <blockquote className={styles.quote}>
-            These teachings are not meant to be mastered.
+            These teachings are not
+            <br />
+            meant to be mastered.
             <br />
             They are meant to be lived.
           </blockquote>
