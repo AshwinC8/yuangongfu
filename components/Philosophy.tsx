@@ -2,10 +2,14 @@ import styles from "./Philosophy.module.css";
 
 export default function Philosophy() {
   return (
-    <section className={styles.philosophy} aria-label="The Philosophy">
+    <section data-section="philosophy" className={styles.philosophy} aria-label="The Philosophy">
       <div className={styles.inner}>
         <p className={styles.label}>The Philosophy</p>
         <div className={styles.contentCol}>
+          <p className={styles.body}>
+            From years of practice, discipline and study, I have been given my teacher’s methods to heal the soul.
+            <br />This path is not suitable for everyone.
+          </p>
           <blockquote className={styles.quote}>
             These teachings are not meant to be mastered.
             <br />

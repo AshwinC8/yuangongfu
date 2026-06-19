@@ -24,6 +24,10 @@ type Props = {
   overlay?: ReactNode;
 };
 
+// Nav-click section jumps ease with a gentler time constant than wheel/touch,
+// so they glide rather than snap. Manual input keeps the default `smoothing`.
+const SECTION_SCROLL_SMOOTHING = 300;
+
 export default function InfiniteScrollViewport({
   numCopies = 3,
   smoothing = 120,
@@ -43,6 +47,8 @@ export default function InfiniteScrollViewport({
   const velocity       = useRef(0);
   const fling          = useRef(0); // touch momentum, px/ms
   const subscribersRef = useRef<Set<ScrollSubscriber>>(new Set());
+  const wakeRef        = useRef<(() => void) | null>(null);
+  const activeSmoothing = useRef(smoothing); // wheel/touch default; raised for section jumps
 
   // Read height synchronously before the browser paints.
   // The state update here triggers a synchronous re-render, so the RAF loop
@@ -90,9 +96,30 @@ export default function InfiniteScrollViewport({
     return () => subscribersRef.current.delete(cb);
   }, []);
 
+  // Jump to a [data-section] element in whichever copy is currently on screen.
+  const scrollToSection = useCallback((id: string) => {
+    const copy = firstCopyRef.current;
+    if (!copy || pageHeight === 0) return;
+    const el = copy.querySelector<HTMLElement>(`[data-section="${id}"]`);
+    if (!el) return;
+    // Both rects ride the same track transform, so their difference is the
+    // section's pure layout offset within one copy.
+    const offset = el.getBoundingClientRect().top - copy.getBoundingClientRect().top;
+    const navH = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue("--nav-height"),
+    ) || 0;
+    const base = offset - navH;
+    // Land on the nearest copy so a click never scrolls a whole page out of view.
+    const target = base + Math.round((currentScroll.current - base) / pageHeight) * pageHeight;
+    activeSmoothing.current = SECTION_SCROLL_SMOOTHING; // glide gently to the section
+    targetScroll.current = target;
+    fling.current = 0;
+    wakeRef.current?.();
+  }, [pageHeight]);
+
   const contextValue = useMemo(
-    () => ({ pageHeight, numCopies, subscribe }),
-    [pageHeight, numCopies, subscribe],
+    () => ({ pageHeight, numCopies, subscribe, scrollToSection }),
+    [pageHeight, numCopies, subscribe, scrollToSection],
   );
 
   useEffect(() => {
@@ -115,6 +142,7 @@ export default function InfiniteScrollViewport({
       lastT   = -1;
       rafId   = requestAnimationFrame(tick);
     }
+    wakeRef.current = wake;
 
     function tick(now: number) {
       const dt = lastT < 0 ? 16.7 : Math.min(64, now - lastT); // clamp tab-switch gaps
@@ -131,7 +159,7 @@ export default function InfiniteScrollViewport({
       }
 
       // Framerate-independent exponential smoothing: same feel at any Hz.
-      const k = reduced ? 1 : 1 - Math.exp(-dt / smoothing);
+      const k = reduced ? 1 : 1 - Math.exp(-dt / activeSmoothing.current);
       cs.current += (ts.current - cs.current) * k;
 
       const settled = fling.current === 0 && Math.abs(ts.current - cs.current) < 0.05;
@@ -174,7 +202,7 @@ export default function InfiniteScrollViewport({
 
       subscribersRef.current.forEach(cb => cb(state));
 
-      if (settled) { running = false; return; }
+      if (settled) { activeSmoothing.current = smoothing; running = false; return; }
       rafId = requestAnimationFrame(tick);
     }
 
@@ -187,6 +215,7 @@ export default function InfiniteScrollViewport({
       dy = Math.max(-500, Math.min(500, dy));               // tame driver spikes
       targetScroll.current += dy;
       fling.current = 0; // wheel input cancels any touch momentum
+      activeSmoothing.current = smoothing; // manual scroll overrides a section glide
       wake();
     }
 
@@ -201,6 +230,7 @@ export default function InfiniteScrollViewport({
       touchV = 0;
       touchT = e.timeStamp;
       fling.current = 0; // grabbing the page stops the current fling
+      activeSmoothing.current = smoothing; // manual scroll overrides a section glide
     }
     function onTouchMove(e: TouchEvent) {
       if (touchY === null) return;
@@ -239,6 +269,7 @@ export default function InfiniteScrollViewport({
       }
       e.preventDefault();
       fling.current = 0;
+      activeSmoothing.current = smoothing; // manual scroll overrides a section glide
       targetScroll.current += dy;
       wake();
     }
@@ -253,6 +284,7 @@ export default function InfiniteScrollViewport({
 
     return () => {
       running = false;
+      wakeRef.current = null;
       cancelAnimationFrame(rafId);
       wrap.removeEventListener("wheel",      onWheel);
       wrap.removeEventListener("touchstart", onTouchStart);

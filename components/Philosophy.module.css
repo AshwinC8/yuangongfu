@@ -7,18 +7,19 @@
   margin: 0 auto;
   padding: 0 var(--page-padding-x);
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 2fr 2fr;
   gap: 40px;
   align-items: start;
 }
 
 .label {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-accent);
   margin: 0;
+  text-align: center;
 }
 
 .contentCol {
@@ -26,12 +27,12 @@
 }
 
 .quote {
-  margin: 0 0 40px;
+  margin: 40px 0;
   padding: 0;
   font-size: clamp(22px, 2.8vw, 32px);
   font-weight: 500;
   line-height: 1.35;
-  color: var(--color-text);
+  color: var(--color-accent);
   font-style: normal;
 }
 

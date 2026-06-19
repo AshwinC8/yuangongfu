@@ -7,19 +7,6 @@ export default function Footer() {
       {/* 178px wordmark pattern strip — matches Figma footer Mask group */}
       <WordmarkStrip width="100%" height={230} className={styles.strip} />
 
-      {/* Logo icon + full-width wordmark */}
-      <div className={styles.logoArea}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/images/logo-icon.jpg"
-          alt="Yuan Gong Fu logo"
-          className={styles.logoIcon}
-        />
-        <p className={styles.wordmark} aria-label="YUANGONGFU">
-          YUANGONGFU
-        </p>
-      </div>
-
       {/* Bottom info bar */}
       <div className={styles.bottom}>
         <p className={styles.tagline}>
@@ -33,6 +20,20 @@ export default function Footer() {
           &copy; {new Date().getFullYear()} Yuan Gong Fu. All rights reserved.
         </p>
       </div>
+
+      {/* Logo icon + full-width wordmark */}
+      <div className={styles.logoArea}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/logo-icon.jpg"
+          alt="Yuan Gong Fu logo"
+          className={styles.logoIcon}
+        />
+        <p className={styles.wordmark} aria-label="YUANGONGFU">
+          YUANGONGFU
+        </p>
+      </div>
+
     </footer>
   );
 }

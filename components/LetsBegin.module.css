@@ -1,0 +1,99 @@
+.section {
+  padding: 100px 0;
+  background: var(--color-bg);
+}
+
+.inner {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 var(--page-padding-x);
+}
+
+.heading {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 40px;
+  /* clamp(40px, 6vw, 72px); */
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--color-accent);
+  margin: 0;
+
+}
+
+/* Two columns, pushed in from the left to match the mock */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 64px;
+  margin-top: 64px;
+  margin-left: 18%;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 20px;
+}
+
+.body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text);
+  margin: 0;
+  max-width: 420px;
+}
+
+.body strong {
+  font-weight: 600;
+}
+
+.schedule {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text);
+  margin: 20px 0 0;
+}
+
+/* min gap before the button; the auto margin below bottom-aligns both CTAs */
+.copy {
+  margin-bottom: 48px;
+}
+
+.cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 190px;
+  height: 44px;
+  padding: 0 24px;
+  background: transparent;
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: 16px;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.cta:hover {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .columns {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    margin-left: 0;
+  }
+}

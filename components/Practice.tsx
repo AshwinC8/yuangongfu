@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import LoopDelayVideo from "./LoopDelayVideo";
 import styles from "./Practice.module.css";
 
 const ITEMS = [
@@ -19,7 +19,7 @@ const ITEMS = [
   },
   {
     title: "Xing Yi Quan",
-    body: "Form and intent become one. This explosive, internal art mirrors nature's forces — five elements, ten animals — and develops a relaxed power known as fa jin. Here, movement becomes expression. Intention becomes clarity.",
+    body: "Form and intent become one. This explosive, internal art mirrors nature’s forces— five elements, ten animals—and develops a relaxed power known as Fa Li. Here, movement becomes expression. Intention becomes clarity.",
   },
   {
     title: "Sanda",
@@ -31,10 +31,14 @@ export default function Practice() {
   const [open, setOpen] = useState<number>(0);
 
   return (
-    <section className={styles.practice} aria-label="The Practice">
+    <section data-section="practice" className={styles.practice} aria-label="The Practice">
       <div className={styles.inner}>
         <div className={styles.imageCol}>
-          <Image src="/images/practice.jpg" alt="Practice" className={styles.image} fill style={{ objectFit: "cover" }} />
+          <LoopDelayVideo
+            className={styles.image}
+            src="/videos/practice.mp4"
+            aria-label="Practice"
+          />
         </div>
 
         <div className={styles.contentCol}>

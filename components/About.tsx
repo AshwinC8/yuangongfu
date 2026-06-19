@@ -1,15 +1,15 @@
-import Image from "next/image";
 import styles from "./About.module.css";
+import LoopDelayVideo from "./LoopDelayVideo";
 import WordmarkStrip from "./WordmarkStrip";
 
 const SECTIONS = [
   {
     label: "About me",
-    body: "I didn’t come to martial arts as a fighter—I came searching. What I found wasn’t a system of techniques, but a path: to presence, stillness, and self-knowledge.\n\nInternal martial arts taught me to feel deeply without being ruled by emotion, to move with awareness instead of reaction. What I share now comes not from belief, but from lived experience. This isn’t a place to learn how to fight. It’s a space to remember who you are.",
+    body: "I came to martial arts to understand the whole, the yin and the yang, the spiritual, healing and fighting aspects of it. My first Shaolin teacher always said that a monk was a sage, a healer and a warrior, this how the search began. \n\nInternal martial arts taught me to feel deeply without being ruled by emotion, to move with awareness instead of reaction. What I share now comes not from belief, but from lived experience.\n\nThis isn’t a place to learn how to fight. It’s a space to remember who you are."
   },
   {
     label: "About Yuan Gong Fu",
-    body: "A wellness practice rooted in the internal martial arts of gong fu and tai chi, designed not for performance or spectacle, but for deep self-inquiry, emotional healing, and sustainable transformation.\n\nThis is not a gym or a dojo. It’s a path.\nOne walked with awareness, discipline, and love.",
+    body: "A practice rooted in the internal martial arts of gong fu and tai chi, designed not for performance or spectacle, but for deep self-inquiry, emotional healing, and sustainable transformation.\n\nThis is not a gym or a dojo. It’s a path.\nOne walked with awareness, discipline, and love."
   },
   {
     label: "Our Mission",
@@ -23,7 +23,7 @@ const SECTIONS = [
 
 export default function About() {
   return (
-    <section className={styles.about} aria-label="About">
+    <section data-section="about" className={styles.about} aria-label="About">
       <div className={styles.inner}>
         <div className={styles.textCol}>
           {SECTIONS.map((s) => (
@@ -39,7 +39,11 @@ export default function About() {
         </div>
 
         <div className={styles.imageCol}>
-          <Image src="/images/about.jpg" alt="About Yuan Gong Fu" fill style={{ objectFit: "cover" }} className={styles.image} />
+          <LoopDelayVideo
+            src="/videos/about%20me.mp4"
+            className={styles.image}
+            aria-label="About Yuan Gong Fu"
+          />
         </div>
 
         <WordmarkStrip className={styles.accent} />

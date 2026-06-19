@@ -6,6 +6,7 @@ import Practice from "@/components/Practice";
 import Enterprise from "@/components/Enterprise";
 import Band from "@/components/Band";
 import Philosophy from "@/components/Philosophy";
+import LetsBegin from "@/components/LetsBegin";
 import About from "@/components/About";
 import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
@@ -20,6 +21,7 @@ export default function Home() {
         <Enterprise />
         <Band />
         <Philosophy />
+        <LetsBegin />
         <About />
         <Testimonials />
         <Footer />

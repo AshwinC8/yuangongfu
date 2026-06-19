@@ -17,7 +17,7 @@ const QUOTES = [
 
 export default function Testimonials() {
   return (
-    <section className={styles.testimonials} aria-label="Testimonials">
+    <section data-section="testimonials" className={styles.testimonials} aria-label="Testimonials">
       <div className={styles.inner}>
         <p className={styles.label}>testimonials</p>
         <div className={styles.grid}>

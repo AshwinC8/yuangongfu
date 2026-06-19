@@ -1,9 +1,10 @@
 import styles from "./Enterprise.module.css";
+import LoopDelayVideo from "./LoopDelayVideo";
 import WordmarkStrip from "./WordmarkStrip";
 
 export default function Enterprise() {
   return (
-    <section className={styles.enterprise} aria-label="For your Enterprise">
+    <section data-section="enterprise" className={styles.enterprise} aria-label="For your Enterprise">
       <div className={styles.inner}>
         <div className={styles.contentCol}>
           <p className={styles.label}>For your Enterprise</p>
@@ -45,11 +46,10 @@ export default function Enterprise() {
         </div>
 
         <div className={styles.imageCol}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/enterprise.jpg"
-            alt="Enterprise wellness"
+          <LoopDelayVideo
             className={styles.image}
+            src="/videos/corporate.mp4"
+            aria-label="Enterprise wellness"
           />
         </div>
 

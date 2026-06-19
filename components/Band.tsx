@@ -1,5 +1,5 @@
-import Image from "next/image";
 import styles from "./Band.module.css";
+import LoopDelayVideo from "./LoopDelayVideo";
 import WordmarkStrip from "./WordmarkStrip";
 
 export default function Band() {
@@ -9,7 +9,7 @@ export default function Band() {
       <WordmarkStrip width="100%" height={35} className={styles.thinStrip} />
 
       <div className={styles.imageStrip}>
-        <Image src="/images/band.jpg" alt="" fill style={{ objectFit: "cover" }} className={styles.img} />
+        <LoopDelayVideo src="/videos/philosphy.mp4" className={styles.img} />
       </div>
     </div>
   );

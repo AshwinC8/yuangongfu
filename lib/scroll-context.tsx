@@ -15,6 +15,7 @@ export type ScrollContextValue = {
   pageHeight: number;
   numCopies: number;
   subscribe: (cb: ScrollSubscriber) => () => void;
+  scrollToSection: (id: string) => void;
 };
 
 export const ScrollContext = createContext<ScrollContextValue | null>(null);

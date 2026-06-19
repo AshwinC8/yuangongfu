@@ -59,21 +59,28 @@
   gap: 22px;
 }
 
-/* Empty grey placeholder blocks from the design (152x32, #d9d9d9).
-   Put real nav content / links inside these when ready. */
-.pill {
-  width: 152px;
-  height: 32px;
-  background: var(--color-pill);
-  border: none;
-  border-radius: 0;
+/* Section nav links — lowercase, accent (red), sit left of "book now" */
+.navLinks {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: #555;
+  gap: 20px;
+}
+
+.navLink {
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-accent);
+  text-transform: lowercase;
+  white-space: nowrap;
+  transition: opacity 0.2s var(--ease);
+}
+
+.navLink:hover {
+  opacity: 0.6;
 }
 
 /* ---- "book now" button (135x32, 2px red border, red text) ---- */
@@ -156,11 +163,22 @@
   pointer-events: auto;
 }
 
-.mobilePill {
-  width: 100%;
-  height: 44px;
-  background: var(--color-pill);
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mobileNavLink {
+  background: none;
   border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--color-accent);
+  text-transform: lowercase;
 }
 
 .mobileCta {

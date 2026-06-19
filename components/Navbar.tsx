@@ -1,11 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useScrollContext } from "@/lib/scroll-context";
 import styles from "./Navbar.module.css";
+
+const NAV_LINKS = [
+  { id: "practice", label: "practice" },
+  { id: "enterprise", label: "enterprise" },
+  { id: "philosophy", label: "philosophy" },
+  { id: "about", label: "about" },
+  { id: "testimonials", label: "testimonials" },
+];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { scrollToSection } = useScrollContext();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 4);
@@ -30,10 +40,18 @@ export default function Navbar() {
 
         {/* Right cluster — matches Figma: 2 grey blocks + book now */}
         <div className={styles.actions}>
-          {/* These two are EMPTY grey placeholders in the design.
-              Drop real nav links / search / language selector in here. */}
-          <button type="button" className={styles.pill} aria-label="Menu item 1" />
-          <button type="button" className={styles.pill} aria-label="Menu item 2" />
+          <nav className={styles.navLinks}>
+            {NAV_LINKS.map((link) => (
+              <button
+                key={link.id}
+                type="button"
+                className={styles.navLink}
+                onClick={() => scrollToSection(link.id)}
+              >
+                {link.label}
+              </button>
+            ))}
+          </nav>
 
           <a href="#book" className={styles.cta}>
             book now
@@ -59,8 +77,21 @@ export default function Navbar() {
           menuOpen ? styles.mobilePanelOpen : ""
         }`}
       >
-        <div className={styles.mobilePill} />
-        <div className={styles.mobilePill} />
+        <nav className={styles.mobileNav}>
+          {NAV_LINKS.map((link) => (
+            <button
+              key={link.id}
+              type="button"
+              className={styles.mobileNavLink}
+              onClick={() => {
+                scrollToSection(link.id);
+                setMenuOpen(false);
+              }}
+            >
+              {link.label}
+            </button>
+          ))}
+        </nav>
         <a href="#book" className={styles.mobileCta} onClick={() => setMenuOpen(false)}>
           book now
         </a>
