@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { albertSans, outfitNoCrossbar } from "./fonts";
 import ClientProviders from "@/components/ClientProviders";
 import { SITE_URL, SOCIAL_PROFILES, CONTACT_EMAIL } from "@/lib/links";
@@ -140,6 +141,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Vercel Web Analytics — privacy-friendly, cookieless. To disable:
+            remove this <Analytics /> line, or toggle Analytics off in the
+            Vercel project dashboard (no redeploy needed). */}
+        <Analytics />
       </body>
     </html>
   );
