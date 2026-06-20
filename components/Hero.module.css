@@ -116,57 +116,48 @@
   color: #fff;
 }
 
-/* ---- Tablet / mobile: stack the copy below the panels ---- */
-@media (max-width: 1000px) {
+/* ---- Tablet / mobile: one full-width panel, copy stacked left below ---- */
+@media (max-width: 1024px) {
   .panels {
+    grid-template-columns: 1fr;
+    gap: 0;
     width: 100%;
     margin-left: 0;
   }
 
+  /* Only the first panel shows on smaller screens — the staggered quad is a
+     desktop-only composition. */
+  .panel:nth-child(n + 2) {
+    display: none;
+  }
+
   .panel:nth-child(1) {
-    height: 60vw;
+    height: auto;
+    aspect-ratio: 4 / 5;
     max-height: 560px;
-  }
-
-  .panel:nth-child(2) {
-    height: 48vw;
-    max-height: 440px;
-  }
-
-  .panel:nth-child(3) {
-    height: 40vw;
-    max-height: 360px;
-  }
-
-  .panel:nth-child(4) {
-    height: 32vw;
-    max-height: 300px;
   }
 
   .copy {
     position: static;
     width: 100%;
     max-width: 100%;
-    margin-top: 40px;
-    align-items: flex-end;
+    margin-top: 32px;
+    text-align: left;
+    align-items: flex-start;
   }
 
   .heading {
-    font-size: clamp(34px, 6vw, 48px);
-  }
-}
-
-@media (max-width: 640px) {
-  .panels {
-    grid-template-columns: repeat(2, 1fr);
+    font-size: clamp(34px, 8vw, 52px);
+    line-height: 0.85;
   }
 
-  .panel:nth-child(n) {
-    height: 46vw;
+  .body {
+    line-height: 1.5;
   }
 
-  .copy {
-    align-items: flex-start;
-    text-align: left;
+  .cta {
+    width: auto;
+    min-width: 229px;
+    padding: 0 24px;
   }
 }

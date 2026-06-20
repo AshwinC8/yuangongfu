@@ -103,13 +103,28 @@
   max-width: 520px;
 }
 
-@media (max-width: 900px) {
-  .inner {
-    grid-template-columns: 1fr;
-    gap: 40px;
+@media (max-width: 1024px) {
+  .practice {
+    padding: 56px 0;
   }
 
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* Full-width but shorter landscape crop on tablet/mobile (object-fit covers). */
   .imageCol {
-    height: 320px;
+    height: clamp(220px, 40vw, 320px);
+  }
+}
+
+@media (max-width: 768px) {
+  .practice {
+    padding: 28px 0;
+  }
+
+  .inner {
+    gap: 24px;
   }
 }

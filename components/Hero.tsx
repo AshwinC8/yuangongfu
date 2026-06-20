@@ -21,85 +21,135 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  // One master clock drives all four panels. Every frame we compute where each
-  // clip *should* be (cycle = clip length + LOOP_DELAY_MS, panel i offset by
-  // i * STAGGER_MS) and correct only on real drift, so the 0.5s stagger never
-  // collapses into sync. The loop only runs while the hero is on/near screen:
-  // the infinite-scroll track renders three Heroes, so pausing the offscreen
-  // copies keeps their per-frame seeks/decode from fighting the scroll.
+  // Desktop runs the staggered four-panel composition; tablet/mobile (≤1024px)
+  // show only panel 1 (CSS hides 2–4), so there the master clock's per-panel
+  // stagger and end-of-clip LOOP_DELAY gap are just dead air. We pick the mode
+  // from matchMedia and re-pick on change so a resize swaps behaviour cleanly.
   useEffect(() => {
-    let raf = 0;
-    let running = false;
-    let startMs = 0;
-    let clipMs = 0;
-    let periodMs = 0;
+    const mobileQuery = window.matchMedia("(max-width: 1024px)");
 
-    const tick = () => {
-      if (clipMs > 0) {
-        const elapsed = performance.now() - startMs;
-        videoRefs.current.forEach((v, i) => {
-          if (!v) return;
-          const phase = elapsed - i * STAGGER_MS;
-          if (phase < 0) {
-            // Not its turn yet — hold on the first frame.
-            if (!v.paused) v.pause();
-            return;
-          }
-          const t = phase % periodMs;
-          if (t < clipMs) {
-            const target = t / 1000;
-            if (Math.abs(v.currentTime - target) > DRIFT_TOLERANCE_S) {
-              v.currentTime = target;
+    // One master clock drives all four panels. Every frame we compute where each
+    // clip *should* be (cycle = clip length + LOOP_DELAY_MS, panel i offset by
+    // i * STAGGER_MS) and correct only on real drift, so the 0.5s stagger never
+    // collapses into sync. The loop only runs while the hero is on/near screen:
+    // the infinite-scroll track renders three Heroes, so pausing the offscreen
+    // copies keeps their per-frame seeks/decode from fighting the scroll.
+    const setupDesktop = () => {
+      let raf = 0;
+      let running = false;
+      let startMs = 0;
+      let clipMs = 0;
+      let periodMs = 0;
+
+      const tick = () => {
+        if (clipMs > 0) {
+          const elapsed = performance.now() - startMs;
+          videoRefs.current.forEach((v, i) => {
+            if (!v) return;
+            const phase = elapsed - i * STAGGER_MS;
+            if (phase < 0) {
+              // Not its turn yet — hold on the first frame.
+              if (!v.paused) v.pause();
+              return;
             }
-            if (v.paused) v.play().catch(() => { });
-          } else if (!v.paused) {
-            // In the delay gap — hold on the last frame.
-            v.pause();
-          }
+            const t = phase % periodMs;
+            if (t < clipMs) {
+              const target = t / 1000;
+              if (Math.abs(v.currentTime - target) > DRIFT_TOLERANCE_S) {
+                v.currentTime = target;
+              }
+              if (v.paused) v.play().catch(() => { });
+            } else if (!v.paused) {
+              // In the delay gap — hold on the last frame.
+              v.pause();
+            }
+          });
+        }
+        raf = requestAnimationFrame(tick);
+      };
+
+      const startLoop = () => {
+        if (running) return;
+        running = true;
+        raf = requestAnimationFrame(tick);
+      };
+      const stopLoop = () => {
+        if (!running) return;
+        running = false;
+        cancelAnimationFrame(raf);
+        videoRefs.current.forEach((v) => {
+          if (v && !v.paused) v.pause();
         });
-      }
-      raf = requestAnimationFrame(tick);
+      };
+
+      const first = videoRefs.current[0];
+      const begin = () => {
+        clipMs = (first?.duration ?? 0) * 1000;
+        periodMs = clipMs + LOOP_DELAY_MS;
+        startMs = performance.now();
+      };
+      if (first && first.readyState >= 1 && first.duration) begin();
+      else first?.addEventListener("loadedmetadata", begin);
+
+      // Run the scheduler only while this copy is on/near screen. rootMargin gives
+      // a head start so the clips are already moving by the time it scrolls in.
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) startLoop();
+          else stopLoop();
+        },
+        { rootMargin: "200px 0px" },
+      );
+      const section = sectionRef.current;
+      if (section) io.observe(section);
+
+      return () => {
+        io.disconnect();
+        cancelAnimationFrame(raf);
+        first?.removeEventListener("loadedmetadata", begin);
+        videoRefs.current.forEach((v) => {
+          if (v && !v.paused) v.pause();
+        });
+      };
     };
 
-    const startLoop = () => {
-      if (running) return;
-      running = true;
-      raf = requestAnimationFrame(tick);
-    };
-    const stopLoop = () => {
-      if (!running) return;
-      running = false;
-      cancelAnimationFrame(raf);
-      videoRefs.current.forEach((v) => {
-        if (v && !v.paused) v.pause();
+    // Only panel 1 is visible — loop that single clip natively so it plays
+    // continuously, with no stagger-in and no pause between play-throughs.
+    const setupMobile = () => {
+      videoRefs.current.forEach((v, i) => {
+        if (v && i !== 0) v.pause();
       });
+      const v = videoRefs.current[0];
+      if (!v) return () => { };
+      v.loop = true;
+
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) v.play().catch(() => { });
+          else v.pause();
+        },
+        { rootMargin: "200px 0px" },
+      );
+      const section = sectionRef.current;
+      if (section) io.observe(section);
+
+      return () => {
+        io.disconnect();
+        v.loop = false;
+        v.pause();
+      };
     };
 
-    const first = videoRefs.current[0];
-    const begin = () => {
-      clipMs = (first?.duration ?? 0) * 1000;
-      periodMs = clipMs + LOOP_DELAY_MS;
-      startMs = performance.now();
+    let cleanup = mobileQuery.matches ? setupMobile() : setupDesktop();
+    const onChange = () => {
+      cleanup();
+      cleanup = mobileQuery.matches ? setupMobile() : setupDesktop();
     };
-    if (first && first.readyState >= 1 && first.duration) begin();
-    else first?.addEventListener("loadedmetadata", begin);
-
-    // Run the scheduler only while this copy is on/near screen. rootMargin gives
-    // a head start so the clips are already moving by the time it scrolls in.
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) startLoop();
-        else stopLoop();
-      },
-      { rootMargin: "200px 0px" },
-    );
-    const section = sectionRef.current;
-    if (section) io.observe(section);
+    mobileQuery.addEventListener("change", onChange);
 
     return () => {
-      io.disconnect();
-      cancelAnimationFrame(raf);
-      first?.removeEventListener("loadedmetadata", begin);
+      mobileQuery.removeEventListener("change", onChange);
+      cleanup();
     };
   }, []);
 

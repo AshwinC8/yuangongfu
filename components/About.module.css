@@ -65,19 +65,70 @@
   align-self: stretch;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+
+  /* Flex column instead of grid: the image holds a real 320px box in the flow
+     (the video inside is absolute, so a grid row with align-items:start
+     collapsed and overlapped the text). Flex stacks cleanly and respects order. */
+  .about {
+    padding: 56px 0;
+  }
+
   .inner {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* Stacked full-width text — drop the desktop right gutter and tighten the
+     gap between the text blocks. */
+  .textCol {
     gap: 40px;
+    padding-right: 0;
   }
 
   .accent {
     display: none;
   }
 
+  /* Full-width shorter crop, above the text on tablet/mobile (object-fit covers).
+     Keep `relative` (not static) so the absolutely-positioned video stays
+     contained — `sticky` is dropped here, but the box must stay positioned. */
   .imageCol {
-    position: static;
-    height: 420px;
+    position: relative;
+    width: 100%;
+    height: clamp(220px, 40vw, 320px);
     order: -1;
+    margin-right: 0;
+    top: 0px;
+  }
+}
+
+/* Tablet: anchor the crop to the very top of the (near-square 1048×876) video.
+   A full-width, taller box plus object-position top reveals the extreme top of
+   the frame rather than a centred band. */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .imageCol {
+    height: clamp(300px, 50vw, 460px);
+  }
+
+  .image {
+    object-position: center top;
+  }
+}
+
+/* Mobile: tighter vertical rhythm. */
+@media (max-width: 768px) {
+  .about {
+    padding: 28px 0;
+    padding-bottom: 52px;
+  }
+
+  .inner {
+    gap: 24px;
+  }
+
+  .textCol {
+    gap: 28px;
   }
 }

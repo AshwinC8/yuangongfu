@@ -31,17 +31,26 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: opacity 0.2s var(--ease);
 }
 
-.contactIcon:hover {
-  opacity: 0.6;
-}
-
-.contactIcon img {
-  height: 20px;
-  width: auto;
+/* Icon rendered as a mask so its colour is controlled by background-color —
+   uniform black by default, accent on hover, regardless of the source art. */
+.contactGlyph {
   display: block;
+  width: 20px;
+  height: 20px;
+  background-color: var(--color-text);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: background-color 0.2s var(--ease);
+}
+
+.contactIcon:hover .contactGlyph {
+  background-color: var(--color-accent);
 }
 
 /* ── Copy popup (above a phone/email icon, on hover/focus) ── */
@@ -138,17 +147,25 @@
 
 .social {
   display: inline-flex;
-  transition: opacity 0.2s var(--ease);
 }
 
-.social:hover {
-  opacity: 0.6;
-}
-
-.social img {
-  height: 22px;
-  width: auto;
+/* Same mask technique as the contact icons — uniform black, accent on hover. */
+.socialIcon {
   display: block;
+  width: 22px;
+  height: 22px;
+  background-color: var(--color-text);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: background-color 0.2s var(--ease);
+}
+
+.social:hover .socialIcon {
+  background-color: var(--color-accent);
 }
 
 /* ── Copyright ── */
@@ -178,6 +195,7 @@
   flex-direction: column;
   align-items: center;
   padding: 72px var(--page-padding-x) 48px;
+  padding-bottom: 0px;
   gap: 40px;
 }
 
@@ -201,9 +219,30 @@
   text-align: center;
 }
 
-@media (max-width: 700px) {
+/* Tablet and below: single stacked column + fit the giant wordmark to the
+   screen. The wordmark is a nowrap line ≈6.95× its font-size for these 10
+   glyphs; size it off the viewport minus the live side padding so it fits at
+   any width (var is 34px on tablet, 20px on phone). */
+@media (max-width: 1024px) {
   .columns {
     grid-template-columns: 1fr;
     row-gap: 32px;
+  }
+
+  .wordmark {
+    font-size: calc((100vw - 2 * var(--page-padding-x) - 16px) / 7);
+  }
+}
+
+@media (max-width: 768px) {
+  .logoArea {
+    padding-top: 56px;
+    padding-bottom: 0px;
+    gap: 28px;
+  }
+
+  .logoIcon {
+    width: 120px;
+    height: 120px;
   }
 }

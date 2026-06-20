@@ -19,7 +19,12 @@
   text-align: center;
 }
 
-.grid {
+.viewport {
+  position: relative;
+}
+
+/* Desktop: static 3-up grid (no carousel). */
+.track {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 40px;
@@ -43,7 +48,6 @@
   line-height: 1.8;
   color: var(--color-text);
   margin: 0;
-  /* font-style: italic; */
 }
 
 .name {
@@ -54,9 +58,142 @@
   color: var(--color-text-muted);
 }
 
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
+/* Carousel controls (arrows + dots) only exist on tablet/mobile. */
+.controls {
+  display: none;
+}
+
+/* ── Tablet / mobile: single-card carousel driven by --active ── */
+@media (max-width: 1024px) {
+  .viewport {
+    overflow: hidden;
+  }
+
+  /* Flex track of full-width cards; slide by translating the whole track.
+     Row height = tallest card, so the height stays stable between slides. */
+  .track {
+    display: flex;
+    gap: 0;
+    align-items: flex-start;
+    transform: translateX(calc(var(--active, 0) * -100%));
+    transition: transform 0.4s var(--ease);
+  }
+
+  .card {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 32px;
+  }
+
+  .arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease),
+      color 0.2s var(--ease), transform 0.15s var(--ease);
+  }
+
+  .arrow:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .arrow:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .arrow:active {
+    transform: scale(0.92);
+  }
+
+  .dots {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--color-text-muted);
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease),
+      transform 0.2s var(--ease);
+  }
+
+  .dot:hover {
+    transform: scale(1.2);
+  }
+
+  .activeDot {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+}
+
+/* Tablet spacing tier (769px – 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .testimonials {
+    padding: 56px 0;
+  }
+
+  .label {
+    margin-bottom: 32px;
+  }
+
+  .card {
+    padding-top: 24px;
+  }
+
+  .controls {
+    margin-top: 28px;
+  }
+}
+
+/* Mobile spacing tier (<= 768px) */
+@media (max-width: 768px) {
+  .testimonials {
+    padding: 36px 0;
+    padding-bottom: 48px;
+  }
+
+  .label {
+    margin-bottom: 18px;
+  }
+
+  .card {
+    padding-top: 16px;
+  }
+
+  .quote {
+    margin-bottom: 12px;
+  }
+
+  .quote p {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .controls {
+    margin-top: 20px;
   }
 }

@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./Footer.module.css";
@@ -11,12 +10,19 @@ type Props = {
   value: string;
   /** Accessible label, e.g. "phone number" or "email address". */
   label: string;
+  /**
+   * Optional link target (e.g. `mailto:`/`tel:`). When set the icon renders as
+   * a real link: clicking copies `value` AND triggers the default action, so
+   * the mail/phone app opens too.
+   */
+  href?: string;
 };
 
-// Icon button that copies `value` on click. A small popup sits above it —
-// showing the value on hover/focus, and "Copied!" briefly after a click —
-// instead of the value being on display all the time.
-export default function CopyContact({ icon, value, label }: Props) {
+// Icon that copies `value` on click. A small popup sits above it — showing the
+// value on hover/focus, and "Copied!" briefly after a click — instead of the
+// value being on display all the time. With `href`, it also fires the link
+// (e.g. opens the mail client) on the same click.
+export default function CopyContact({ icon, value, label, href }: Props) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<number>(0);
 
@@ -33,16 +39,35 @@ export default function CopyContact({ icon, value, label }: Props) {
     }
   };
 
+  const glyph = (
+    <span
+      className={styles.contactGlyph}
+      style={{ WebkitMaskImage: `url(${icon})`, maskImage: `url(${icon})` }}
+      aria-hidden="true"
+    />
+  );
+
   return (
     <span className={styles.copyWrap}>
-      <button
-        type="button"
-        className={styles.contactIcon}
-        aria-label={`Copy ${label} ${value}`}
-        onClick={copy}
-      >
-        <img src={icon} alt="" />
-      </button>
+      {href ? (
+        <a
+          href={href}
+          className={styles.contactIcon}
+          aria-label={`Copy ${label} ${value} and open`}
+          onClick={copy}
+        >
+          {glyph}
+        </a>
+      ) : (
+        <button
+          type="button"
+          className={styles.contactIcon}
+          aria-label={`Copy ${label} ${value}`}
+          onClick={copy}
+        >
+          {glyph}
+        </button>
+      )}
       <span className={styles.copyPopup} role="status" aria-live="polite">
         {copied ? "Copied!" : value}
       </span>

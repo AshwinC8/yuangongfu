@@ -25,3 +25,20 @@
   object-fit: cover;
   object-position: center 15%;
 }
+
+/* Shorter full-width strip on tablet/mobile so it isn't oversized. */
+@media (max-width: 1024px) {
+  .wrapper {
+    margin-top: 48px;
+  }
+
+  .imageStrip {
+    height: 160px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    margin-top: 28px;
+  }
+}

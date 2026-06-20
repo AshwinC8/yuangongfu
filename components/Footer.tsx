@@ -35,9 +35,11 @@ const COLUMNS: FooterItem[][] = [
 ];
 
 const SOCIALS = [
-  { label: "Instagram", icon: "/icons/Instagram.svg", href: "#" },
-  { label: "YouTube", icon: "/icons/YouTube.svg", href: "#" },
+  { label: "Instagram", icon: "/icons/Instagram.svg", href: "https://www.instagram.com/yuangongfu" },
+  { label: "YouTube", icon: "/icons/YouTube.svg", href: "https://www.youtube.com" },
+  // LinkedIn URL TBD — placeholder until supplied.
   { label: "LinkedIn", icon: "/icons/LinkedIn.svg", href: "#" },
+  { label: "Facebook", icon: "/icons/Facebook.svg", href: "https://www.facebook.com/p/YUAN-Gong-Fu-100072486010751/" },
 ];
 
 export default function Footer() {
@@ -50,9 +52,18 @@ export default function Footer() {
       <div className={styles.inner}>
         {/* Contact icons — click to copy, value shown in a popup above the icon */}
         <div className={styles.contact}>
-          {/* Placeholder number — swap for the real one. */}
-          <CopyContact icon="/icons/Phone.svg" value="+41 21 555 01 23" label="phone number" />
-          <CopyContact icon="/icons/Email.svg" value={CONTACT_EMAIL} label="email address" />
+          <CopyContact
+            icon="/icons/Phone.svg"
+            value="+41 79 857 00 16"
+            label="phone number"
+            href="tel:+41798570016"
+          />
+          <CopyContact
+            icon="/icons/Email.svg"
+            value={CONTACT_EMAIL}
+            label="email address"
+            href={`mailto:${CONTACT_EMAIL}`}
+          />
         </div>
 
         {/* Link columns */}
@@ -97,7 +108,11 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src={s.icon} alt="" />
+              <span
+                className={styles.socialIcon}
+                style={{ WebkitMaskImage: `url(${s.icon})`, maskImage: `url(${s.icon})` }}
+                aria-hidden="true"
+              />
             </a>
           ))}
         </div>
