@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 type Props = {
   src: string;
   className?: string;
+  /** Still frame shown before the clip loads/plays — improves perceived load. */
+  poster?: string;
   /**
    * Pause between the end of one play-through and the start of the next.
    * 0 (default) = seamless continuous loop via the native `loop` attribute.
@@ -18,6 +20,7 @@ type Props = {
 export default function LoopDelayVideo({
   src,
   className,
+  poster,
   delayMs = 0,
   "aria-label": ariaLabel,
 }: Props) {
@@ -41,16 +44,34 @@ export default function LoopDelayVideo({
     };
   }, [delayMs]);
 
+  // Play only while on/near screen, and don't fetch until then (preload="none").
+  // The infinite-scroll engine renders the page in triplicate, so without this
+  // every off-screen copy would also download and decode. Mirrors the Hero's
+  // IntersectionObserver gating (200px head start before it scrolls in).
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) v.play().catch(() => {});
+        else v.pause();
+      },
+      { rootMargin: "200px 0px" },
+    );
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <video
       ref={ref}
       className={className}
       src={src}
-      autoPlay
+      poster={poster}
       muted
       loop={delayMs <= 0}
       playsInline
-      preload="auto"
+      preload="none"
       aria-label={ariaLabel}
     />
   );

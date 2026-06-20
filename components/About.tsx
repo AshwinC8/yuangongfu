@@ -41,6 +41,7 @@ export default function About() {
         <div className={styles.imageCol}>
           <LoopDelayVideo
             src="/videos/about%20me.mp4"
+            poster="/images/posters/about.jpg"
             className={styles.image}
             aria-label="About Yuan Gong Fu"
           />

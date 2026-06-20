@@ -9,7 +9,11 @@ export default function Band() {
       <WordmarkStrip width="100%" height={35} className={styles.thinStrip} />
 
       <div className={styles.imageStrip}>
-        <LoopDelayVideo src="/videos/philosphy.mp4" className={styles.img} />
+        <LoopDelayVideo
+          src="/videos/philosphy.mp4"
+          poster="/images/posters/philosphy.jpg"
+          className={styles.img}
+        />
       </div>
     </div>
   );

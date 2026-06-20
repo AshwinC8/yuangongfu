@@ -7,6 +7,8 @@ import styles from "./Hero.module.css";
 // All four panels share the SAME source clip, each cropped to fill its panel
 // (Figma FILL, centered). Swap this path to change the video.
 const HERO_VIDEO = "/videos/hero%20section%20test.mp4";
+// Still frame painted immediately (the LCP candidate) while the clip buffers.
+const HERO_POSTER = "/images/posters/hero.jpg";
 
 const PANELS = [0, 1, 2, 3];
 // Each panel's clip starts 0.5s after the previous one (0, 0.5, 1.0, 1.5s).
@@ -164,6 +166,7 @@ export default function Hero() {
                   videoRefs.current[i] = el;
                 }}
                 src={HERO_VIDEO}
+                poster={HERO_POSTER}
                 muted
                 playsInline
                 preload="auto"

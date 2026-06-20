@@ -37,6 +37,7 @@ export default function Practice() {
           <LoopDelayVideo
             className={styles.image}
             src="/videos/practice.mp4"
+            poster="/images/posters/practice.jpg"
             aria-label="Practice"
           />
         </div>

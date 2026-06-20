@@ -1,6 +1,6 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
+import Image from "next/image";
 import { useScrollContext } from "@/lib/scroll-context";
 import { CONTACT_EMAIL, CLASS_BOOKING_URL } from "@/lib/links";
 import WordmarkStrip from "./WordmarkStrip";
@@ -133,9 +133,11 @@ export default function Footer() {
 
       {/* Logo icon + full-width wordmark — original brand area, left unchanged */}
       <div className={styles.logoArea}>
-        <img
+        <Image
           src="/images/logo-icon.jpg"
           alt="Yuan Gong Fu logo"
+          width={160}
+          height={160}
           className={styles.logoIcon}
         />
         <p className={styles.wordmark} aria-label="YUANGONGFU">
