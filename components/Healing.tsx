@@ -16,15 +16,6 @@ export default function Healing() {
   return (
     <section data-section="healing" className={styles.healing} aria-label="Healing">
       <div className={styles.inner}>
-        <div className={styles.imageCol}>
-          <LoopDelayVideo
-            className={styles.image}
-            src="/videos/healing.mp4"
-            poster="/images/posters/healing.jpg"
-            aria-label="Healing"
-          />
-        </div>
-
         <div className={styles.contentCol}>
           <p className={styles.label}>The Healing</p>
 
@@ -41,6 +32,15 @@ export default function Healing() {
           >
             book your free consultation
           </button>
+        </div>
+
+        <div className={styles.imageCol}>
+          <LoopDelayVideo
+            className={styles.image}
+            src="/videos/healing.mp4"
+            poster="/images/posters/healing.jpg"
+            aria-label="Healing"
+          />
         </div>
       </div>
     </section>

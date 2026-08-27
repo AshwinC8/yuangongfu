@@ -10,7 +10,7 @@
   margin: 0 auto;
   padding: 0 var(--page-padding-x);
   display: grid;
-  grid-template-columns: 50% 1fr;
+  grid-template-columns: 1fr 50%;
   gap: 107px;
   align-items: start;
 }
@@ -84,9 +84,12 @@
     gap: 32px;
   }
 
-  /* Full-width but shorter landscape crop on tablet/mobile (object-fit covers). */
+  /* Full-width but shorter landscape crop on tablet/mobile (object-fit covers).
+     Also put the image back above the text when stacked — the left/right flip
+     is a desktop-grid-only thing. */
   .imageCol {
     height: clamp(220px, 40vw, 320px);
+    order: -1;
   }
 }
 
