@@ -17,7 +17,7 @@ const STAGGER_MS = 500;
 const LOOP_DELAY_MS = 2000;
 // Only re-seek a clip if it has drifted more than this from where it should be.
 // Keeps normal playback seek-free; only corrects after a throttle/scroll stall.
-const DRIFT_TOLERANCE_S = 0.3;
+const DRIFT_TOLERANCE_S = 1.0;
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
