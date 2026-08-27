@@ -169,7 +169,7 @@ export default function Hero() {
                 poster={HERO_POSTER}
                 muted
                 playsInline
-                preload="auto"
+                preload="metadata"
                 aria-hidden="true"
               />
             </div>
