@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Yuan Gong Fu — SEO &amp; Performance Optimisation Report</title>
+<style>
+  :root {
+    --red: #bc0000;
+    --ink: #161412;
+    --muted: #6b6560;
+    --line: #e7e3df;
+    --bg: #f4f2ef;
+    --card: #ffffff;
+    --green: #1f7a4d;
+    --green-bg: #e7f4ec;
+    --amber: #9a6a00;
+    --amber-bg: #fbf1da;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── Header ── */
+  .masthead {
+    border-top: 6px solid var(--red);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: 6px solid var(--red);
+    border-radius: 10px;
+    padding: 40px 40px 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--red);
+    margin: 0 0 14px;
+  }
+  .masthead h1 {
+    margin: 0 0 10px;
+    font-size: 30px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .masthead p.sub {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .meta-row div span {
+    display: block;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10.5px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .meta-row div strong { font-weight: 600; }
+
+  /* ── Stat strip ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 24px 0 8px;
+  }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat .num {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--red);
+    line-height: 1;
+  }
+  .stat .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Sections ── */
+  section.block {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px 32px 8px;
+    margin-top: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .sec-head .ic {
+    width: 40px; height: 40px;
+    flex: 0 0 40px;
+    border-radius: 9px;
+    background: #fbe9e9;
+    display: grid; place-items: center;
+    font-size: 20px;
+  }
+  .sec-head h2 {
+    margin: 0;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+  }
+  .sec-head .tag {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .tag.done { color: var(--green); background: var(--green-bg); }
+  .tag.pending { color: var(--amber); background: var(--amber-bg); }
+  .sec-intro { color: var(--muted); margin: 4px 0 18px; }
+
+  /* ── Item rows ── */
+  .item {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .item:first-of-type { border-top: none; }
+  .item h3 {
+    margin: 0 0 6px;
+    font-size: 15px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .item h3::before {
+    content: "✓";
+    color: var(--green);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .item p { margin: 0 0 10px; }
+  .item p.why { color: var(--muted); font-size: 14px; }
+  .item p.why b { color: var(--ink); font-weight: 600; }
+
+  /* ── Before / after ── */
+  .ba {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0 4px;
+  }
+  .ba .col {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .ba .col .h {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 6px 12px;
+  }
+  .ba .before .h { background: #fbecec; color: #9a2222; }
+  .ba .after  .h { background: var(--green-bg); color: var(--green); }
+  .ba code {
+    display: block;
+    padding: 12px;
+    font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #2b2b2b;
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: #fbfaf9;
+  }
+  .muted-i { color: var(--muted); font-style: italic; }
+
+  ul.clean { margin: 6px 0 12px; padding-left: 20px; }
+  ul.clean li { margin-bottom: 5px; }
+
+  .files {
+    font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+    font-size: 12px;
+    color: var(--red);
+    background: #fbf2f2;
+    border: 1px solid #f3dede;
+    border-radius: 6px;
+    padding: 2px 7px;
+    display: inline-block;
+  }
+
+  /* ── Pending list ── */
+  .pending-list .item h3::before { content: "○"; color: var(--amber); }
+
+  /* ── Footer ── */
+  .doc-foot {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+  .doc-foot strong { color: var(--ink); }
+
+  a { color: var(--red); }
+
+  @media (max-width: 680px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .ba { grid-template-columns: 1fr; }
+    .masthead, section.block { padding-left: 22px; padding-right: 22px; }
+  }
+
+  @media print {
+    body { background: #fff; font-size: 12.5px; }
+    .page { padding: 0; max-width: none; }
+    section.block, .masthead, .stat { box-shadow: none; break-inside: avoid; }
+    .item, .ba { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ───────────── Masthead ───────────── -->
+  <div class="masthead">
+    <p class="eyebrow">SEO &amp; Performance Report</p>
+    <h1>Yuan Gong Fu — Search &amp; Marketing Optimisation</h1>
+    <p class="sub">A summary of the technical SEO, social-sharing, structured-data and Core&nbsp;Web&nbsp;Vitals work completed on the website.</p>
+    <div class="meta-row">
+      <div><span>Project</span><strong>yuangongfu (Next.js / App Router)</strong></div>
+      <div><span>Prepared</span><strong>20 June 2026</strong></div>
+      <div><span>Scope</span><strong>Non-visual — design &amp; layout untouched</strong></div>
+      <div><span>Status</span><strong>Core items live · 3 follow-ups pending</strong></div>
+    </div>
+  </div>
+
+  <!-- ───────────── Stat strip ───────────── -->
+  <div class="stats">
+    <div class="stat"><div class="num">6</div><div class="lbl">Areas optimised</div></div>
+    <div class="stat"><div class="num">100%</div><div class="lbl">Crawlable &amp; indexable</div></div>
+    <div class="stat"><div class="num">~66%</div><div class="lbl">Less video load on init</div></div>
+    <div class="stat"><div class="num">0</div><div class="lbl">Visual / layout changes</div></div>
+  </div>
+
+  <!-- ───────────── 1. Metadata ───────────── -->
+  <section class="block">
+    <div class="sec-head">
+      <div class="ic">🔎</div>
+      <h2>1 · Search Metadata &amp; Snippets</h2>
+      <span class="tag done">Done</span>
+    </div>
+    <p class="sec-intro">What Google shows as your title and description in search results — previously placeholder text.</p>
+
+    <div class="item">
+      <h3>Real, keyword-rich title &amp; description</h3>
+      <div class="ba">
+        <div class="col before"><div class="h">Before</div><code>title: "Yuan Gong Fu"
+description: "Yuan Gong Fu"</code></div>
+        <div class="col after"><div class="h">After</div><code>title: "Yuan Gong Fu — Internal
+Martial Arts in Lausanne"
+description: "Internal martial arts in
+Lausanne with Tugdual Belbeoch — Tai Chi,
+Qi Gong, meditation &amp; Sanda…"</code></div>
+      </div>
+      <p class="why"><b>Why:</b> The description is the sales pitch under your link in Google. The old placeholder gave searchers (and ranking signals) nothing to go on.</p>
+    </div>
+
+    <div class="item">
+      <h3>Title template, keywords, author &amp; publisher tags</h3>
+      <p class="why">Any future sub-pages auto-format as <span class="muted-i">"Page Name — Yuan Gong Fu"</span>. Added target keywords (Taijiquan, Qi Gong, Xing Yi Quan, Sanda, Wudang, Lausanne) and authorship metadata.</p>
+    </div>
+
+    <div class="item">
+      <h3>Canonical URL + robots directives</h3>
+      <p class="why">Tells Google the single official URL (avoids duplicate-content ambiguity) and explicitly allows indexing with large image/snippet previews.</p>
+    </div>
+    <p style="font-size:12.5px;color:var(--muted);padding:6px 0 14px;"><span class="files">app/layout.tsx</span></p>
+  </section>
+
+  <!-- ───────────── 2. Social sharing ───────────── -->
+  <section class="block">
+    <div class="sec-head">
+      <div class="ic">🔗</div>
+      <h2>2 · Social Sharing Previews</h2>
+      <span class="tag done">Done</span>
+    </div>
+    <p class="sec-intro">How the link looks when shared on WhatsApp, Instagram, iMessage, LinkedIn, Facebook &amp; X.</p>
+
+    <div class="item">
+      <h3>Open Graph &amp; Twitter Card tags</h3>
+      <div class="ba">
+        <div class="col before"><div class="h">Before</div><code>Pasting the link showed a blank
+box — no image, no title, no
+description.</code></div>
+        <div class="col after"><div class="h">After</div><code>Rich preview card: branded image,
+headline, and description on every
+major platform.</code></div>
+      </div>
+      <p class="why"><b>Why:</b> Shared links are a primary discovery channel for a personal practice. A blank preview looks broken and kills click-through.</p>
+    </div>
+
+    <div class="item">
+      <h3>Auto-generated 1200×630 share image</h3>
+      <p class="why">A branded card ("Power begins in stillness" + disciplines + Lausanne) is generated on the fly — no static asset to maintain or re-export when copy changes.</p>
+      <p style="font-size:12.5px;color:var(--muted);"><span class="files">app/opengraph-image.tsx</span></p>
+    </div>
+  </section>
+
+  <!-- ───────────── 3. Structured data ───────────── -->
+  <section class="block">
+    <div class="sec-head">
+      <div class="ic">🧩</div>
+      <h2>3 · Structured Data (Rich Results)</h2>
+      <span class="tag done">Done</span>
+    </div>
+    <p class="sec-intro">Machine-readable business facts that power Google rich results, the local "knowledge panel" and Maps eligibility.</p>
+
+    <div class="item">
+      <h3>LocalBusiness / SportsActivityLocation schema (JSON-LD)</h3>
+      <p>Built entirely from facts already on the site:</p>
+      <ul class="clean">
+        <li><b>Business &amp; instructor</b> — Yuan Gong Fu · Tugdual Belbeoch (founder)</li>
+        <li><b>Disciplines</b> — Tai Chi, Taijiquan, Qi Gong, Meditation, Xing Yi Quan, Sanda, Wudang tradition</li>
+        <li><b>Location</b> — Beau-Rivage Palace, Lausanne (Vaud, CH), Lake Geneva region</li>
+        <li><b>Opening hours</b> — Mon 18:00–20:00 · Sat 17:00–18:30</li>
+        <li><b>Contact</b> — phone, email</li>
+        <li><b>Verified profiles</b> — Instagram &amp; Facebook (via <code style="font-size:12px">sameAs</code>)</li>
+      </ul>
+      <p class="why"><b>Why:</b> This is what lets Google display the business with hours, contact and social links rather than just a blue link.</p>
+      <p style="font-size:12.5px;color:var(--muted);"><span class="files">app/layout.tsx</span></p>
+    </div>
+  </section>
+
+  <!-- ───────────── 4. Crawlability ───────────── -->
+  <section class="block">
+    <div class="sec-head">
+      <div class="ic">🗺️</div>
+      <h2>4 · Crawlability &amp; Indexing</h2>
+      <span class="tag done">Done</span>
+    </div>
+    <p class="sec-intro">Helping search engines find and correctly index the site.</p>
+
+    <div class="item">
+      <h3>sitemap.xml</h3>
+      <p class="why">A machine-readable map of the site, submitted to Google Search Console to speed up and guide indexing.</p>
+      <p style="font-size:12.5px;color:var(--muted);"><span class="files">app/sitemap.ts</span> → <span class="files">/sitemap.xml</span></p>
+    </div>
+    <div class="item">
+      <h3>robots.txt</h3>
+      <p class="why">Explicitly allows crawlers and points them to the sitemap and canonical host.</p>
+      <p style="font-size:12.5px;color:var(--muted);"><span class="files">app/robots.ts</span> → <span class="files">/robots.txt</span></p>
+    </div>
+  </section>
+
+  <!-- ───────────── 5. Performance / CWV ───────────── -->
+  <section class="block">
+    <div class="sec-head">
+      <div class="ic">⚡</div>
+      <h2>5 · Performance — Core Web Vitals</h2>
+      <span class="tag done">Done</span>
+    </div>
+    <p class="sec-intro">Page speed is a Google ranking factor. The autoplaying videos were the main risk. <b>No on-screen behaviour or design changed.</b></p>
+
+    <div class="item">
+      <h3>Videos load &amp; play only when on screen</h3>
+      <div class="ba">
+        <div class="col before"><div class="h">Before</div><code>Page renders in triplicate
+(infinite scroll) → all 3 copies
+of every clip downloaded AND
+autoplayed at once on load.</code></div>
+        <div class="col after"><div class="h">After</div><code>preload="none" + visibility
+gating → only the on-screen copy
+loads &amp; plays; off-screen ones
+stay idle.</code></div>
+      </div>
+      <p class="why"><b>Why:</b> Cuts initial data dramatically (≈⅔ of video weight removed at load) and stops wasted CPU/battery decoding hidden clips.</p>
+    </div>
+
+    <div class="item">
+      <h3>Poster frames on every video</h3>
+      <p class="why">A lightweight still image (~28&nbsp;KB) paints instantly while the clip buffers — it becomes the <b>Largest Contentful Paint</b> element instead of a black box. Biggest win on mobile, where the hero clip is heavy.</p>
+    </div>
+
+    <div class="item">
+      <h3>Optimised footer logo</h3>
+      <p class="why">Moved to Next.js image optimisation → modern formats (AVIF/WebP), lazy-loaded, fixed dimensions to prevent layout shift (CLS).</p>
+      <p style="font-size:12.5px;color:var(--muted);"><span class="files">LoopDelayVideo.tsx</span> <span class="files">Hero.tsx</span> <span class="files">Footer.tsx</span> + poster assets</p>
+    </div>
+  </section>
+
+  <!-- ───────────── 6. Analytics ───────────── -->
+  <section class="block">
+    <div class="sec-head">
+      <div class="ic">📊</div>
+      <h2>6 · Analytics &amp; Measurement</h2>
+      <span class="tag done">Done</span>
+    </div>
+    <p class="sec-intro">Knowing what's working — traffic, referrers and popular sections over time.</p>
+
+    <div class="item">
+      <h3>Vercel Web Analytics installed</h3>
+      <p class="why"><b>Why:</b> You can't improve what you can't measure. This makes SEO progress visible — visits, where they came from, and which sections get attention.</p>
+      <ul class="clean">
+        <li><b>Privacy-friendly</b> — cookieless, no consent banner required (GDPR-friendly).</li>
+        <li><b>Lightweight</b> — negligible impact on page speed.</li>
+        <li><b>Easy to switch off</b> — one line of code, or an instant toggle in the Vercel dashboard (no redeploy).</li>
+      </ul>
+      <p style="font-size:12.5px;color:var(--muted);"><span class="files">app/layout.tsx</span> · <span class="files">@vercel/analytics</span></p>
+    </div>
+  </section>
+
+  <!-- ───────────── Already-strong ───────────── -->
+  <section class="block">
+    <div class="sec-head">
+      <div class="ic">✅</div>
+      <h2>Already Solid (verified)</h2>
+      <span class="tag done">Pass</span>
+    </div>
+    <p class="sec-intro">On-page fundamentals that were already in good shape — confirmed during the audit.</p>
+    <ul class="clean">
+      <li>Exactly one <code>&lt;h1&gt;</code> with a clear page heading; logical <code>&lt;h2&gt;</code> hierarchy.</li>
+      <li><code>&lt;html lang="en"&gt;</code> set for correct language signalling.</li>
+      <li>Semantic landmarks (<code>&lt;section&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;footer&gt;</code>) and alt / aria labels on media.</li>
+      <li>Real social profiles linked (Instagram, Facebook) — off-page signal.</li>
+    </ul>
+  </section>
+
+  <!-- ───────────── Pending ───────────── -->
+  <section class="block">
+    <div class="sec-head">
+      <div class="ic">📌</div>
+      <h2>Recommended Next Steps</h2>
+      <span class="tag pending">Pending</span>
+    </div>
+    <p class="sec-intro">Quick follow-ups that need a decision or a piece of information.</p>
+    <div class="pending-list">
+      <div class="item">
+        <h3>Confirm the production domain</h3>
+        <p class="why">Canonical, sitemap, robots &amp; social tags currently use a placeholder (<code>www.yuangongfu.com</code>). Confirm the real domain so every absolute URL is correct.</p>
+      </div>
+      <div class="item">
+        <h3>Real YouTube &amp; LinkedIn URLs</h3>
+        <p class="why">Footer links are placeholders. Supplying the real profiles lets us add them to the footer and the structured-data <code>sameAs</code> list.</p>
+      </div>
+      <div class="item">
+        <h3>Submit to Google Search Console</h3>
+        <p class="why">Once the domain is live: verify ownership and submit the sitemap to start indexing and monitor performance.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="doc-foot">
+    <strong>Yuan Gong Fu</strong> — SEO &amp; Performance Optimisation Report · 20 June 2026<br/>
+    All changes are at the metadata / asset-loading level. The visual design, layout and scroll experience are unchanged.
+  </p>
+
+</div>
+</body>
+</html>

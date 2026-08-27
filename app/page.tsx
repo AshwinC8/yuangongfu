@@ -2,6 +2,7 @@ import InfiniteScrollViewport from "@/components/InfiniteScrollViewport";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Intro from "@/components/Intro";
+import Healing from "@/components/Healing";
 import Practice from "@/components/Practice";
 import Enterprise from "@/components/Enterprise";
 import Band from "@/components/Band";
@@ -17,6 +18,7 @@ export default function Home() {
       <main style={{ paddingTop: "var(--nav-height)" }}>
         <Hero />
         <Intro />
+        <Healing />
         <Practice />
         <Enterprise />
         <Band />
