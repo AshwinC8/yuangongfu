@@ -6,7 +6,7 @@ import styles from "./Hero.module.css";
 
 // All four panels share the SAME source clip, each cropped to fill its panel
 // (Figma FILL, centered). Swap this path to change the video.
-const HERO_VIDEO = "/videos/hero%20section%20test.mp4";
+const HERO_VIDEO = "/videos/hero.mp4";
 // Still frame painted immediately (the LCP candidate) while the clip buffers.
 const HERO_POSTER = "/images/posters/hero.jpg";
 
