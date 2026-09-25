@@ -23,12 +23,13 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  // Desktop runs the staggered four-panel composition; tablet/mobile (≤1024px)
-  // show only panel 1 (CSS hides 2–4), so there the master clock's per-panel
-  // stagger and end-of-clip LOOP_DELAY gap are just dead air. We pick the mode
-  // from matchMedia and re-pick on change so a resize swaps behaviour cleanly.
+  // Desktop runs the staggered four-panel composition; tablet/mobile (≤1400px,
+  // covering iPad Pro landscape) show only panel 1 (CSS hides 2–4), so there
+  // the master clock's per-panel stagger and end-of-clip LOOP_DELAY gap are
+  // just dead air. We pick the mode from matchMedia and re-pick on change so
+  // a resize swaps behaviour cleanly.
   useEffect(() => {
-    const mobileQuery = window.matchMedia("(max-width: 1024px)");
+    const mobileQuery = window.matchMedia("(max-width: 1400px)");
 
     // One master clock drives all four panels. Every frame we compute where each
     // clip *should* be (cycle = clip length + LOOP_DELAY_MS, panel i offset by
@@ -42,6 +43,10 @@ export default function Hero() {
       let startMs = 0;
       let clipMs = 0;
       let periodMs = 0;
+      // Tracks which panels have a restart seek in flight, so we seek once
+      // and wait, rather than re-issuing the seek (and stacking listeners)
+      // on every tick while paused and waiting for `seeked` to fire.
+      const restarting = [false, false, false, false];
 
       const tick = () => {
         if (clipMs > 0) {
@@ -57,10 +62,33 @@ export default function Hero() {
             const t = phase % periodMs;
             if (t < clipMs) {
               const target = t / 1000;
-              if (Math.abs(v.currentTime - target) > DRIFT_TOLERANCE_S) {
+              if (v.paused) {
+                if (restarting[i]) return; // already seeking; let it resolve
+                // (Re)starting playback — including the loop restart after the
+                // hold gap. Seek first and wait for the browser to confirm the
+                // frame is actually ready (`seeked`) before calling play(),
+                // instead of firing both in the same tick. Skipping that wait
+                // is what made the restart read as a stutter/flash: play()
+                // could fire before frame 0 was decoded, unlike Practice's
+                // native `loop`, which the browser always hands off cleanly.
+                restarting[i] = true;
+                v.currentTime = target;
+                v.addEventListener(
+                  "seeked",
+                  () => {
+                    restarting[i] = false;
+                    // The panel may have scrolled off-screen (stopLoop) while
+                    // this seek was resolving — don't resume playback then.
+                    if (running) v.play().catch(() => { });
+                  },
+                  { once: true },
+                );
+              } else if (Math.abs(v.currentTime - target) > DRIFT_TOLERANCE_S) {
+                // Already playing but drifted (e.g. after a throttled tab) —
+                // rare, and the clip is already moving, so a direct seek is
+                // fine; waiting here would just add a needless stall.
                 v.currentTime = target;
               }
-              if (v.paused) v.play().catch(() => { });
             } else if (!v.paused) {
               // In the delay gap — hold on the last frame.
               v.pause();

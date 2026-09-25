@@ -27,7 +27,7 @@
 }
 
 /* Shorter full-width strip on tablet/mobile so it isn't oversized. */
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
   .wrapper {
     margin-top: 48px;
   }

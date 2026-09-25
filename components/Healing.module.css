@@ -74,7 +74,7 @@
   color: #fff;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
   .healing {
     padding: 56px 0;
   }
@@ -90,6 +90,12 @@
   .imageCol {
     height: clamp(220px, 40vw, 320px);
     order: -1;
+  }
+
+  /* Crop was centering below the subject's head on the shorter box — bias
+     the crop up so more of the head/upper body stays in frame. */
+  .image {
+    object-position: center top;
   }
 }
 

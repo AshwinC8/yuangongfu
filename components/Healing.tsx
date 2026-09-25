@@ -1,6 +1,6 @@
 "use client";
 
-import { useScrollContext } from "@/lib/scroll-context";
+import { CLASS_BOOKING_URL } from "@/lib/links";
 import LoopDelayVideo from "./LoopDelayVideo";
 import styles from "./Healing.module.css";
 
@@ -11,8 +11,6 @@ const BODY = [
 ];
 
 export default function Healing() {
-  const { scrollToSection } = useScrollContext();
-
   return (
     <section data-section="healing" className={styles.healing} aria-label="Healing">
       <div className={styles.inner}>
@@ -25,13 +23,14 @@ export default function Healing() {
             </p>
           ))}
 
-          <button
-            type="button"
+          <a
+            href={CLASS_BOOKING_URL}
             className={styles.cta}
-            onClick={() => scrollToSection("contact")}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             book your free consultation
-          </button>
+          </a>
         </div>
 
         <div className={styles.imageCol}>

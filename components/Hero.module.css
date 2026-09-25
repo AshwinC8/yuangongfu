@@ -117,7 +117,7 @@
 }
 
 /* ---- Tablet / mobile: one full-width panel, copy stacked left below ---- */
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
   .panels {
     grid-template-columns: 1fr;
     gap: 0;
@@ -135,6 +135,12 @@
     height: auto;
     aspect-ratio: 4 / 5;
     max-height: 560px;
+  }
+
+  /* Crop was centering below the subject's head on the shorter tablet/mobile
+     box — bias the crop up so more of the head/upper body stays in frame. */
+  .panel video {
+    object-position: center top;
   }
 
   .copy {

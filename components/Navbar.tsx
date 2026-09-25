@@ -7,7 +7,7 @@ import styles from "./Navbar.module.css";
 
 const NAV_LINKS = [
   { id: "practice", label: "practice" },
-  { id: "enterprise", label: "enterprise" },
+  { id: "enterprise", label: "corporate" },
   { id: "philosophy", label: "philosophy" },
   { id: "about", label: "about" },
   { id: "testimonials", label: "testimonials" },

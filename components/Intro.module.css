@@ -60,7 +60,7 @@
   margin: 38px 0 0;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
   .col {
     display: none;
   }

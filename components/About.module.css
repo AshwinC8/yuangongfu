@@ -65,7 +65,7 @@
   align-self: stretch;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
 
   /* Flex column instead of grid: the image holds a real 320px box in the flow
      (the video inside is absolute, so a grid row with align-items:start
@@ -107,7 +107,7 @@
 /* Tablet: anchor the crop to the very top of the (near-square 1048×876) video.
    A full-width, taller box plus object-position top reveals the extreme top of
    the frame rather than a centred band. */
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 769px) and (max-width: 1400px) {
   .imageCol {
     height: clamp(300px, 50vw, 460px);
   }

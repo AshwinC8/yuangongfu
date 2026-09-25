@@ -64,7 +64,7 @@
 }
 
 /* ── Tablet / mobile: single-card carousel driven by --active ── */
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
   .viewport {
     overflow: hidden;
   }
@@ -150,8 +150,8 @@
   }
 }
 
-/* Tablet spacing tier (769px – 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
+/* Tablet spacing tier (769px – 1400px) */
+@media (min-width: 769px) and (max-width: 1400px) {
   .testimonials {
     padding: 56px 0;
   }

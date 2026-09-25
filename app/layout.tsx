@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { albertSans, outfitNoCrossbar } from "./fonts";
 import ClientProviders from "@/components/ClientProviders";
+import CookieBar from "@/components/CookieBar";
 import { SITE_URL, SOCIAL_PROFILES, CONTACT_EMAIL } from "@/lib/links";
 import "./globals.css";
 
@@ -137,6 +138,7 @@ export default function RootLayout({
     >
       <body>
         <ClientProviders>{children}</ClientProviders>
+        <CookieBar />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

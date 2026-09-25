@@ -56,7 +56,7 @@ export default function Enterprise() {
             className={styles.image}
             src="/videos/corporate.mp4"
             poster="/images/posters/corporate.jpg"
-            aria-label="Enterprise wellness"
+            aria-label="Corporate wellness"
           />
         </div>
 

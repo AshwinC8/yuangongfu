@@ -223,7 +223,7 @@
    screen. The wordmark is a nowrap line ≈6.95× its font-size for these 10
    glyphs; size it off the viewport minus the live side padding so it fits at
    any width (var is 34px on tablet, 20px on phone). */
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
   .columns {
     grid-template-columns: 1fr;
     row-gap: 32px;
