@@ -4,7 +4,14 @@ import { useState } from "react";
 import CrossfadeVideo from "./CrossfadeVideo";
 import styles from "./Practice.module.css";
 
-const ITEMS = [
+type PracticeItem = {
+  title: string;
+  body: string;
+  video: string;
+  fit?: "cover" | "contain";
+};
+
+const ITEMS: PracticeItem[] = [
   {
     title: "Meditation",
     body: "The foundation of everything. We begin by sitting. We breathe. We notice. Meditation teaches us to observe the flow of thought without being carried away by it. This stillness becomes the ground on which transformation grows.",
@@ -24,6 +31,9 @@ const ITEMS = [
     title: "Xing Yi Quan",
     body: "Form and intent become one. This explosive, internal art mirrors nature’s forces— five elements, ten animals—and develops a relaxed power known as Fa Li. Here, movement becomes expression. Intention becomes clarity.",
     video: "/videos/practice-xingyiquan.mp4",
+    // Full frame — the source is wider than the accordion box, so `cover`
+    // would crop off the sides of a form that travels across the frame.
+    fit: "contain" as const,
   },
   {
     title: "Sanda",
@@ -47,6 +57,7 @@ export default function Practice() {
             src={ITEMS[activeVideo].video}
             poster="/images/posters/practice.jpg"
             aria-label={ITEMS[activeVideo].title}
+            fit={ITEMS[activeVideo].fit ?? "cover"}
           />
         </div>
 

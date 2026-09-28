@@ -2,6 +2,9 @@
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  /* Shows through as letterbox fill behind a "contain" video. */
+  background: #000;
 }
 
 .layer {
@@ -9,7 +12,6 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   opacity: 0;
   transition: opacity 0.4s ease;
 }

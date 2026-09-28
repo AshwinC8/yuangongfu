@@ -3,11 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import ownStyles from "./CrossfadeVideo.module.css";
 
+type Fit = "cover" | "contain";
+
 type Props = {
   src: string;
   className?: string;
   poster?: string;
   "aria-label"?: string;
+  /**
+   * "cover" (default) fills the box, cropping whatever doesn't fit.
+   * "contain" shows the whole frame instead, letterboxed on a solid black
+   * background (matches the Hero section's fill).
+   */
+  fit?: Fit;
 };
 
 // Like LoopDelayVideo, but for a video whose `src` switches at runtime
@@ -23,6 +31,7 @@ export default function CrossfadeVideo({
   className,
   poster,
   "aria-label": ariaLabel,
+  fit = "cover",
 }: Props) {
   // Layer 0 keeps its JSX-bound initial src forever (React never revisits it
   // since the prop backing it never changes); every later swap — including
@@ -30,6 +39,7 @@ export default function CrossfadeVideo({
   // keeps React's reconciliation and the imperative writes from fighting
   // over the same attribute.
   const [initialSrc] = useState(src);
+  const [initialFit] = useState(fit);
   const layer0 = useRef<HTMLVideoElement>(null);
   const layer1 = useRef<HTMLVideoElement>(null);
   const layers = [layer0, layer1] as const;
@@ -73,6 +83,7 @@ export default function CrossfadeVideo({
     v.pause();
     v.src = src;
     v.currentTime = 0;
+    v.style.objectFit = fit;
     const onPlaying = () => {
       if (cancelled) return;
       shownSrcRef.current = src;
@@ -87,7 +98,7 @@ export default function CrossfadeVideo({
       v.removeEventListener("playing", onPlaying);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [src]);
+  }, [src, fit]);
 
   return (
     <div ref={containerRef} className={`${ownStyles.wrap} ${className ?? ""}`} aria-label={ariaLabel}>
@@ -103,6 +114,7 @@ export default function CrossfadeVideo({
           preload="none"
           aria-hidden="true"
           className={`${ownStyles.layer} ${i === active ? ownStyles.layerActive : ""}`}
+          style={{ objectFit: i === 0 ? initialFit : "cover" }}
         />
       ))}
     </div>
