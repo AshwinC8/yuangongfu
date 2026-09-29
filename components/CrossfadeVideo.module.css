@@ -19,3 +19,11 @@
 .layerActive {
   opacity: 1;
 }
+
+/* Below the desktop breakpoint the box is a short wide crop; let a clip pull
+   the crop toward its subject (e.g. keep a face in frame). */
+@media (max-width: 1400px) {
+  .layer {
+    object-position: 50% var(--focus-y, 50%);
+  }
+}

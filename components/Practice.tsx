@@ -9,6 +9,8 @@ type PracticeItem = {
   body: string;
   video: string;
   fit?: "cover" | "contain";
+  // Tablet/mobile crop focus (see CrossfadeVideo `focusY`).
+  focusY?: string;
 };
 
 const ITEMS: PracticeItem[] = [
@@ -26,6 +28,8 @@ const ITEMS: PracticeItem[] = [
     title: "Taijiquan",
     body: "The dance of opposites. Yin and yang in motion. Taijiquan brings mindfulness into more complex movements and shifting directions. It strengthens coordination, balance, and emotional regulation — all while staying rooted in the meditative state.",
     video: "/videos/practice-taijiquan.mp4",
+    // Short tablet crop cuts off his head at the default centre; bias to top.
+    focusY: "15%",
   },
   {
     title: "Xing Yi Quan",
@@ -58,6 +62,7 @@ export default function Practice() {
             poster="/images/posters/practice.jpg"
             aria-label={ITEMS[activeVideo].title}
             fit={ITEMS[activeVideo].fit ?? "cover"}
+            focusY={ITEMS[activeVideo].focusY}
           />
         </div>
 

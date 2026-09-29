@@ -16,6 +16,11 @@ type Props = {
    * background (matches the Hero section's fill).
    */
   fit?: Fit;
+  /**
+   * Vertical focal point (CSS %) for the crop when the box is shorter than the
+   * video (tablet/mobile layout). Lower = shows more of the top. Default 50%.
+   */
+  focusY?: string;
 };
 
 // Like LoopDelayVideo, but for a video whose `src` switches at runtime
@@ -32,6 +37,7 @@ export default function CrossfadeVideo({
   poster,
   "aria-label": ariaLabel,
   fit = "cover",
+  focusY,
 }: Props) {
   // Layer 0 keeps its JSX-bound initial src forever (React never revisits it
   // since the prop backing it never changes); every later swap — including
@@ -101,7 +107,12 @@ export default function CrossfadeVideo({
   }, [src, fit]);
 
   return (
-    <div ref={containerRef} className={`${ownStyles.wrap} ${className ?? ""}`} aria-label={ariaLabel}>
+    <div
+      ref={containerRef}
+      className={`${ownStyles.wrap} ${className ?? ""}`}
+      aria-label={ariaLabel}
+      style={focusY ? ({ "--focus-y": focusY } as React.CSSProperties) : undefined}
+    >
       {layers.map((ref, i) => (
         <video
           key={i}
