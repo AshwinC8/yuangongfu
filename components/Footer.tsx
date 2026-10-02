@@ -141,7 +141,7 @@ export default function Footer() {
           className={styles.logoIcon}
         />
         <p className={styles.wordmark} aria-label="YUANGONGFU">
-          YUANGONGFU
+          YU<span className={styles.wordmarkA}>A</span>NGONGFU
         </p>
       </div>
     </footer>

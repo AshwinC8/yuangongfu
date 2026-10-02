@@ -17,6 +17,12 @@
   height: 534px;
 }
 
+/* Taijiquan (1104×968): native ratio at every width so the whole frame shows. */
+.imageCol.imageColFull {
+  height: auto;
+  aspect-ratio: 1104 / 968;
+}
+
 .image {
   position: absolute;
   inset: 0;

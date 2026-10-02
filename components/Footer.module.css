@@ -219,6 +219,10 @@
   text-align: center;
 }
 
+.wordmarkA {
+  color: var(--color-accent);
+}
+
 /* Tablet and below: single stacked column + fit the giant wordmark to the
    screen. The wordmark is a nowrap line ≈6.95× its font-size for these 10
    glyphs; size it off the viewport minus the live side padding so it fits at

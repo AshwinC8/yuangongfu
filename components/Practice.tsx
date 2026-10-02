@@ -11,6 +11,8 @@ type PracticeItem = {
   fit?: "cover" | "contain";
   // Tablet/mobile crop focus (see CrossfadeVideo `focusY`).
   focusY?: string;
+  // Show the full frame on tablet/mobile instead of the short crop.
+  fullFrame?: boolean;
 };
 
 const ITEMS: PracticeItem[] = [
@@ -30,6 +32,7 @@ const ITEMS: PracticeItem[] = [
     video: "/videos/practice-taijiquan.mp4",
     // Short tablet crop cuts off his head at the default centre; bias to top.
     focusY: "15%",
+    fullFrame: true,
   },
   {
     title: "Xing Yi Quan",
@@ -55,7 +58,9 @@ export default function Practice() {
   return (
     <section data-section="practice" className={styles.practice} aria-label="The Practice">
       <div className={styles.inner}>
-        <div className={styles.imageCol}>
+        <div
+          className={`${styles.imageCol} ${ITEMS[activeVideo].fullFrame ? styles.imageColFull : ""}`}
+        >
           <CrossfadeVideo
             className={styles.image}
             src={ITEMS[activeVideo].video}
