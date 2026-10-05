@@ -8,11 +8,8 @@ type PracticeItem = {
   title: string;
   body: string;
   video: string;
-  fit?: "cover" | "contain";
-  // Tablet/mobile crop focus (see CrossfadeVideo `focusY`).
-  focusY?: string;
-  // Show the full frame on tablet/mobile instead of the short crop.
-  fullFrame?: boolean;
+  // Native width/height of the clip; the frame resizes to it (no crop, no bars).
+  ratio: string;
 };
 
 const ITEMS: PracticeItem[] = [
@@ -20,32 +17,31 @@ const ITEMS: PracticeItem[] = [
     title: "Meditation",
     body: "The foundation of everything. We begin by sitting. We breathe. We notice. Meditation teaches us to observe the flow of thought without being carried away by it. This stillness becomes the ground on which transformation grows.",
     video: "/videos/practice-meditation.mp4",
+    ratio: "16 / 9",
   },
   {
     title: "Qi Gong",
     body: "The energy begins to move. In simple, graceful motions, we bring awareness into the body. We connect breath, posture, and intention — releasing tension, realigning the nervous system, and awakening a sense of quiet strength.",
     video: "/videos/practice-qigong.mp4",
+    ratio: "728 / 576",
   },
   {
     title: "Taijiquan",
     body: "The dance of opposites. Yin and yang in motion. Taijiquan brings mindfulness into more complex movements and shifting directions. It strengthens coordination, balance, and emotional regulation — all while staying rooted in the meditative state.",
     video: "/videos/practice-taijiquan.mp4",
-    // Short tablet crop cuts off his head at the default centre; bias to top.
-    focusY: "15%",
-    fullFrame: true,
+    ratio: "1104 / 968",
   },
   {
     title: "Xing Yi Quan",
     body: "Form and intent become one. This explosive, internal art mirrors nature’s forces— five elements, ten animals—and develops a relaxed power known as Fa Li. Here, movement becomes expression. Intention becomes clarity.",
     video: "/videos/practice-xingyiquan.mp4",
-    // Full frame — the source is wider than the accordion box, so `cover`
-    // would crop off the sides of a form that travels across the frame.
-    fit: "contain" as const,
+    ratio: "16 / 9",
   },
   {
     title: "Sanda",
     body: "Stillness under pressure. Sanda is the practical, combat-ready application of internal principles. Through strikes, projections, and movement, we challenge ourselves to remain centered even in chaos — training the body to meet life as it comes.",
     video: "/videos/practice-sanda.mp4",
+    ratio: "16 / 9",
   },
 ];
 
@@ -58,17 +54,18 @@ export default function Practice() {
   return (
     <section data-section="practice" className={styles.practice} aria-label="The Practice">
       <div className={styles.inner}>
-        <div
-          className={`${styles.imageCol} ${ITEMS[activeVideo].fullFrame ? styles.imageColFull : ""}`}
-        >
-          <CrossfadeVideo
-            className={styles.image}
-            src={ITEMS[activeVideo].video}
-            poster="/images/posters/practice.jpg"
-            aria-label={ITEMS[activeVideo].title}
-            fit={ITEMS[activeVideo].fit ?? "cover"}
-            focusY={ITEMS[activeVideo].focusY}
-          />
+        <div className={styles.imageCol}>
+          <div
+            className={styles.frame}
+            style={{ "--ratio": ITEMS[activeVideo].ratio } as React.CSSProperties}
+          >
+            <CrossfadeVideo
+              className={styles.image}
+              src={ITEMS[activeVideo].video}
+              poster="/images/posters/practice.jpg"
+              aria-label={ITEMS[activeVideo].title}
+            />
+          </div>
         </div>
 
         <div className={styles.contentCol}>

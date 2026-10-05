@@ -13,14 +13,19 @@
 }
 
 .imageCol {
-  position: relative;
-  height: 534px;
+  /* Fixed stage sized for the tallest clip (Taijiquan, 1104×968) so the
+     accordion beside it never shifts; the frame inside is centred and
+     resizes to each clip's own ratio. */
+  aspect-ratio: 1104 / 968;
+  display: flex;
+  align-items: center;
 }
 
-/* Taijiquan (1104×968): native ratio at every width so the whole frame shows. */
-.imageCol.imageColFull {
-  height: auto;
-  aspect-ratio: 1104 / 968;
+.frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--ratio);
+  transition: aspect-ratio 0.4s var(--ease);
 }
 
 .image {
@@ -119,10 +124,6 @@
     gap: 32px;
   }
 
-  /* Full-width but shorter landscape crop on tablet/mobile (object-fit covers). */
-  .imageCol {
-    height: clamp(220px, 40vw, 320px);
-  }
 }
 
 @media (max-width: 768px) {
