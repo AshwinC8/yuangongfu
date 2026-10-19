@@ -106,7 +106,9 @@ export default function Practice() {
                       <LoopDelayVideo
                         className={styles.image}
                         src={item.video}
-                        poster={item.poster}
+                        // Closed items skip the poster: browsers fetch it eagerly,
+                        // even on desktop where this copy of the clip is hidden.
+                        poster={open === i ? item.poster : undefined}
                         active={open === i}
                         aria-label={item.title}
                       />
