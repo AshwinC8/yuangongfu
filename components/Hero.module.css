@@ -131,16 +131,14 @@
     display: none;
   }
 
+  /* Native 888×976 box: the subject moves around, and any shorter or wider
+     crop cuts off their head, feet or arms in some pose. Capped and centred so
+     a wide tablet doesn't get a viewport-tall panel. */
   .panel:nth-child(1) {
     height: auto;
-    aspect-ratio: 4 / 5;
-    max-height: 560px;
-  }
-
-  /* Crop was centering below the subject's head on the shorter tablet/mobile
-     box — bias the crop up so more of the head/upper body stays in frame. */
-  .panel video {
-    object-position: center top;
+    aspect-ratio: 888 / 976;
+    max-width: 728px;
+    margin: 0 auto;
   }
 
   .copy {

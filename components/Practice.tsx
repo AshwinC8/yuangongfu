@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import CrossfadeVideo from "./CrossfadeVideo";
+import LoopDelayVideo from "./LoopDelayVideo";
 import styles from "./Practice.module.css";
 
 type PracticeItem = {
   title: string;
   body: string;
   video: string;
+  // First frame of the clip, shown in the tablet/mobile in-panel video.
+  poster: string;
   // Native width/height of the clip; the frame resizes to it (no crop, no bars).
   ratio: string;
 };
@@ -17,30 +20,35 @@ const ITEMS: PracticeItem[] = [
     title: "Meditation",
     body: "The foundation of everything. We begin by sitting. We breathe. We notice. Meditation teaches us to observe the flow of thought without being carried away by it. This stillness becomes the ground on which transformation grows.",
     video: "/videos/practice-meditation.mp4",
+    poster: "/images/posters/practice.jpg",
     ratio: "16 / 9",
   },
   {
     title: "Qi Gong",
     body: "The energy begins to move. In simple, graceful motions, we bring awareness into the body. We connect breath, posture, and intention — releasing tension, realigning the nervous system, and awakening a sense of quiet strength.",
     video: "/videos/practice-qigong.mp4",
+    poster: "/images/posters/practice-qigong.jpg",
     ratio: "728 / 576",
   },
   {
     title: "Taijiquan",
     body: "The dance of opposites. Yin and yang in motion. Taijiquan brings mindfulness into more complex movements and shifting directions. It strengthens coordination, balance, and emotional regulation — all while staying rooted in the meditative state.",
     video: "/videos/practice-taijiquan.mp4",
+    poster: "/images/posters/practice-taijiquan.jpg",
     ratio: "1104 / 968",
   },
   {
     title: "Xing Yi Quan",
     body: "Form and intent become one. This explosive, internal art mirrors nature’s forces— five elements, ten animals—and develops a relaxed power known as Fa Li. Here, movement becomes expression. Intention becomes clarity.",
     video: "/videos/practice-xingyiquan.mp4",
+    poster: "/images/posters/practice-xingyiquan.jpg",
     ratio: "16 / 9",
   },
   {
     title: "Sanda",
     body: "Stillness under pressure. Sanda is the practical, combat-ready application of internal principles. Through strikes, projections, and movement, we challenge ourselves to remain centered even in chaos — training the body to meet life as it comes.",
     video: "/videos/practice-sanda.mp4",
+    poster: "/images/posters/practice-sanda.jpg",
     ratio: "16 / 9",
   },
 ];
@@ -89,6 +97,20 @@ export default function Practice() {
                 </button>
                 <div className={`${styles.panel} ${open === i ? styles.panelOpen : ""}`}>
                   <div className={styles.panelInner}>
+                    {/* Tablet/mobile: the clip sits in the open panel, right under
+                        the tapped title (desktop uses the side column instead). */}
+                    <div
+                      className={styles.panelMedia}
+                      style={{ "--ratio": item.ratio } as React.CSSProperties}
+                    >
+                      <LoopDelayVideo
+                        className={styles.image}
+                        src={item.video}
+                        poster={item.poster}
+                        active={open === i}
+                        aria-label={item.title}
+                      />
+                    </div>
                     <p className={styles.body}>{item.body}</p>
                   </div>
                 </div>

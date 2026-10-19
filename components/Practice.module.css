@@ -36,6 +36,11 @@
   object-fit: cover;
 }
 
+/* Tablet/mobile-only copy of the clip, inside the open accordion panel. */
+.panelMedia {
+  display: none;
+}
+
 .contentCol {
   padding-top: 8px;
 }
@@ -124,6 +129,22 @@
     gap: 32px;
   }
 
+  /* Stacked, the side clip sits above the whole list and scrolls out of view
+     when a lower item is tapped — show each clip inside its own panel instead,
+     at the clip's native ratio (no crop). */
+  .imageCol {
+    display: none;
+  }
+
+  .panelMedia {
+    display: block;
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    aspect-ratio: var(--ratio);
+    margin: 0 auto 20px;
+    background: var(--color-border);
+  }
 }
 
 @media (max-width: 768px) {

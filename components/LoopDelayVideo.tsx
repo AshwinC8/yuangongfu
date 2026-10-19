@@ -12,6 +12,11 @@ type Props = {
    * 0 (default) = seamless continuous loop via the native `loop` attribute.
    */
   delayMs?: number;
+  /**
+   * false keeps the clip paused even while it's on screen (e.g. inside a
+   * collapsed accordion panel). Default true.
+   */
+  active?: boolean;
   "aria-label"?: string;
 };
 
@@ -22,9 +27,12 @@ export default function LoopDelayVideo({
   className,
   poster,
   delayMs = 0,
+  active = true,
   "aria-label": ariaLabel,
 }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
+  const visibleRef = useRef(false);
+  const activeRef = useRef(active);
 
   useEffect(() => {
     if (delayMs <= 0) return; // continuous loop handled by the `loop` attribute
@@ -53,7 +61,8 @@ export default function LoopDelayVideo({
     if (!v) return;
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) v.play().catch(() => {});
+        visibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting && activeRef.current) v.play().catch(() => {});
         else v.pause();
       },
       { rootMargin: "200px 0px" },
@@ -61,6 +70,16 @@ export default function LoopDelayVideo({
     io.observe(v);
     return () => io.disconnect();
   }, []);
+
+  // `active` flipping while the clip is already in view (a panel opening or
+  // closing) won't fire the observer, so apply it here.
+  useEffect(() => {
+    activeRef.current = active;
+    const v = ref.current;
+    if (!v) return;
+    if (!active) v.pause();
+    else if (visibleRef.current) v.play().catch(() => {});
+  }, [active]);
 
   return (
     <video

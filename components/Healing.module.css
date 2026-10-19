@@ -84,18 +84,23 @@
     gap: 32px;
   }
 
-  /* Full-width but shorter landscape crop on tablet/mobile (object-fit covers).
-     Also put the image back above the text when stacked — the left/right flip
-     is a desktop-grid-only thing. */
+  /* Full-width on tablet/mobile at the clip's own ratio (capped): a taller box
+     would make `cover` scale the clip up and crop its sides instead of showing
+     more of it. Also put the image back above the text when stacked — the
+     left/right flip is a desktop-grid-only thing. */
   .imageCol {
-    height: clamp(220px, 40vw, 320px);
+    width: 100%;
+    height: auto;
+    aspect-ratio: 928 / 720;
+    max-height: 480px;
     order: -1;
   }
 
-  /* Crop was centering below the subject's head on the shorter box — bias
-     the crop up so more of the head/upper body stays in frame. */
+  /* The clip is pre-cropped to its real picture (no baked-in bars), so this
+     short wide box crops tighter. Aim ~45% down so the subject's head and
+     upper body stay in frame. */
   .image {
-    object-position: center top;
+    object-position: center 45%;
   }
 }
 

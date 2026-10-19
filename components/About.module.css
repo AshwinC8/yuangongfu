@@ -91,29 +91,20 @@
     display: none;
   }
 
-  /* Full-width shorter crop, above the text on tablet/mobile (object-fit covers).
-     Keep `relative` (not static) so the absolutely-positioned video stays
-     contained — `sticky` is dropped here, but the box must stay positioned. */
+  /* Native 1048×876 box above the text on tablet/mobile: the subject fills
+     ~80% of the frame height, so any shorter crop cuts off their head or feet.
+     Capped and centred on wide tablets. Keep `relative` (not static) so the
+     absolutely-positioned video stays contained — `sticky` is dropped here,
+     but the box must stay positioned. */
   .imageCol {
     position: relative;
     width: 100%;
-    height: clamp(220px, 40vw, 320px);
+    max-width: 728px;
+    height: auto;
+    aspect-ratio: 1048 / 876;
     order: -1;
-    margin-right: 0;
+    margin: 0 auto;
     top: 0px;
-  }
-}
-
-/* Tablet: anchor the crop to the very top of the (near-square 1048×876) video.
-   A full-width, taller box plus object-position top reveals the extreme top of
-   the frame rather than a centred band. */
-@media (min-width: 769px) and (max-width: 1400px) {
-  .imageCol {
-    height: clamp(300px, 50vw, 460px);
-  }
-
-  .image {
-    object-position: center top;
   }
 }
 

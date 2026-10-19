@@ -106,11 +106,22 @@
     padding-right: 0;
   }
 
-  /* Full-width shorter crop, above the text on tablet/mobile (object-fit covers). */
+  /* Full-width, above the text on tablet/mobile. The box is the clip's own 16:9
+     (capped): a taller box would make `cover` scale the clip up and crop its
+     sides instead of showing more of it. */
   .imageCol {
-    height: clamp(220px, 40vw, 320px);
+    position: relative;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: 480px;
     order: -1;
     margin-right: 0;
+  }
+
+  .image {
+    position: absolute;
+    inset: 0;
   }
 
   .accent {
