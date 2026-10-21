@@ -98,13 +98,30 @@
 
   .columns {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 80px;
     margin-top: 40px;
     margin-left: 0;
   }
 
+  /* Stacked blocks sit centred on tablet/phone; the heading above stays left.
+     The copy is one capped box (label + body share its left edge) and only the
+     schedule and the buttons are centred inside it. */
+  .col {
+    align-items: center;
+  }
+
   .copy {
+    width: 100%;
+    max-width: 620px;
     margin-bottom: 32px;
+  }
+
+  .body {
+    max-width: none;
+  }
+
+  .schedule {
+    text-align: center;
   }
 }
 
@@ -115,7 +132,7 @@
   }
 
   .columns {
-    gap: 32px;
+    gap: 56px;
     margin-top: 32px;
   }
 

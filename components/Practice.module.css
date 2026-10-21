@@ -110,6 +110,10 @@
   overflow: hidden;
 }
 
+.panelText {
+  min-width: 0;
+}
+
 .body {
   margin: 0;
   padding-bottom: 24px;
@@ -144,6 +148,23 @@
     aspect-ratio: var(--ratio);
     margin: 0 auto 20px;
     background: var(--color-border);
+  }
+}
+
+/* Tablet: shrink the in-panel clip and run the text beside it, so title,
+   clip and copy read together. Below the lower bound the text column gets too
+   narrow to read, so it falls back to the stacked layout above. */
+@media (min-width: 600px) and (max-width: 1400px) {
+  .panelInner {
+    display: grid;
+    grid-template-columns: clamp(240px, 40%, 380px) 1fr;
+    column-gap: 28px;
+    align-items: start;
+  }
+
+  .panelMedia {
+    max-width: none;
+    margin: 0 0 24px;
   }
 }
 
