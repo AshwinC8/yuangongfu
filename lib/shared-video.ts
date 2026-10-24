@@ -13,6 +13,14 @@
 // memory. Anything that isn't ready yet — slow connection, clip still queued —
 // simply plays from its normal URL, exactly as before. A blob that fails to play
 // falls back to the network URL.
+//
+// Laptop-sized screens get the sharper file of a clip when it has one (HD_VIDEO in
+// lib/videos.ts). Callers keep passing the clip's usual URL; it is swapped for the
+// sharper one here, so nothing else has to know which screen it is on.
+
+import { isTouchFirstDevice } from "./device";
+import { queryFlag } from "./perf";
+import { HD_VIDEO } from "./videos";
 
 type Entry = { blobUrl?: string; bytes: number };
 
@@ -21,14 +29,38 @@ const queue: string[] = [];
 const CONCURRENCY = 2; // leave bandwidth for whatever the visitor is actually watching
 let running = 0;
 
-/** The shared blob: URL for a clip if it has been downloaded, else the clip's own URL. */
+// Laptop-sized screen? Decided once per page load, so a clip never changes file
+// midway (a resize would otherwise download it again). The width is the CSS
+// laptop/tablet breakpoint; a touch-first device stays on the lighter files whatever
+// its width (an iPad Pro in landscape is 1366px). ?hd=on|off forces the answer.
+let hd: boolean | undefined;
+
+function wantsHd(): boolean {
+  if (typeof window === "undefined") return false;
+  if (hd === undefined) {
+    const forced = queryFlag("hd");
+    hd =
+      forced === "on" ||
+      (forced !== "off" && window.matchMedia("(min-width: 1301px)").matches && !isTouchFirstDevice());
+  }
+  return hd;
+}
+
+/** The URL a clip really plays from on this screen: its sharper file if it has one, else itself. */
+function clipUrl(url: string): string {
+  return (wantsHd() && HD_VIDEO[url]) || url;
+}
+
+/** The shared blob: URL for a clip if it has been downloaded, else the URL it plays from here. */
 export function videoSrc(url: string): string {
-  return entries.get(url)?.blobUrl ?? url;
+  const real = clipUrl(url);
+  return entries.get(real)?.blobUrl ?? real;
 }
 
 /** Queue clips for download, in order. Safe to call repeatedly; each clip is fetched once. */
 export function preloadVideos(urls: readonly string[]) {
-  for (const url of urls) {
+  for (const key of urls) {
+    const url = clipUrl(key);
     if (entries.has(url)) continue;
     entries.set(url, { bytes: 0 });
     queue.push(url);
@@ -85,8 +117,8 @@ export function setVideoSrc(v: HTMLVideoElement, url: string, resume = false) {
 
 /**
  * Call just before play(): an element that has not loaded anything yet is switched
- * to the shared download, so it starts instantly. One that is already loading or
- * playing is left alone — changing src would restart it.
+ * to the shared download (or, on a laptop, the sharper file), so it starts instantly.
+ * One that is already loading or playing is left alone — changing src would restart it.
  */
 export function adoptSharedSrc(v: HTMLVideoElement, url: string) {
   if (v.readyState !== 0) return;

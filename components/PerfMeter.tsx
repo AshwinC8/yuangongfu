@@ -98,7 +98,7 @@ export default function PerfMeter() {
         peakAt = now;
       }
 
-      const flags = ["strips", "videos", "touch", "preload"]
+      const flags = ["strips", "videos", "touch", "preload", "hd"]
         .map((f) => [f, queryFlag(f)] as const)
         .filter(([, v]) => v)
         .map(([f, v]) => `${f}=${v}`)

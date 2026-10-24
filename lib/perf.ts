@@ -10,6 +10,8 @@
 //                   strip renderer)
 //   ?videos=off     no video ever plays
 //   ?preload=off    don't pre-download the clips; they load on demand as before
+//   ?hd=on|off      play the sharper laptop clips / the lighter tablet ones, whatever
+//                   the screen (default: sharper on a non-touch screen over 1300px)
 //
 // Combine them (?perf&strips=off) and compare the meter between runs.
 

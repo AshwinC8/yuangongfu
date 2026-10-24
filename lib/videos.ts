@@ -17,6 +17,19 @@ export const VIDEO = {
   aboutMe: "/videos/about%20me.mp4?v=2",
 } as const;
 
+// Sharper files for laptop-sized screens (see wantsHd in lib/shared-video.ts), keyed
+// by the clip's entry above. Tablets and phones keep the lighter file. A clip missing
+// here has no sharper version and plays the same everywhere: the hero, qigong and
+// taijiquan have no new file; healing's is a lower-res, differently framed crop;
+// philosophy's is no sharper than the current one (860 px wide against 856).
+export const HD_VIDEO: Readonly<Record<string, string>> = {
+  [VIDEO.meditation]: "/videos/hd/practice-meditation.mp4",
+  [VIDEO.sanda]: "/videos/hd/practice-sanda.mp4",
+  [VIDEO.xingyiquan]: "/videos/hd/practice-xingyiquan.mp4",
+  [VIDEO.corporate]: "/videos/hd/corporate.mp4",
+  [VIDEO.aboutMe]: "/videos/hd/about-me.mp4",
+};
+
 // Download order once the page has loaded: what's seen first, then what a visitor
 // is most likely to tap or scroll to next, small clips ahead of the big ones.
 export const PRELOAD_ORDER: readonly string[] = [
