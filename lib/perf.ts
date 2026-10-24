@@ -7,10 +7,8 @@
 //                   force WebGL on an iPad
 //   ?strips=off     strips laid out but never drawn
 //   ?touch=on|off   pretend this is / isn't a touch-first device (picks the default
-//                   strip renderer and the fast-flick hold)
+//                   strip renderer)
 //   ?videos=off     no video ever plays
-//   ?freeze=on|off  force the "strips hold still during a fast flick" behaviour on
-//                   or off (default: on for touch devices only)
 //
 // Combine them (?perf&strips=off) and compare the meter between runs.
 

@@ -17,7 +17,6 @@
 // the last draw (the long rest tail), nothing is drawn at all.
 
 import { isTouchFirstDevice } from "../device";
-import { scrollActivity } from "../scroll-activity";
 import { buildAtlas, type Atlas } from "./atlas";
 import {
   STATIC_COLUMN,
@@ -91,14 +90,6 @@ void main() {
 // (the "arrived frozen" problem the IntersectionObserver version had).
 const VIEW_MARGIN = 1;
 const MAX_STRIP_PIXELS = 16_000_000;
-
-// On a touch device the page is scrolled from JS on the main thread, so every
-// strip redraw competes with the scroll itself. During a fast flick the throb is
-// moving far too quickly to read anyway, so strips hold their last frame above
-// FREEZE_ABOVE (CSS px per 60 Hz frame) and resume below RESUME_BELOW — the old
-// CSS renderer paused the same way. Pointer devices (laptops) never freeze.
-const FREEZE_ABOVE = 14;
-const RESUME_BELOW = 8;
 
 type Size = { w: number; h: number };
 
@@ -536,18 +527,12 @@ class Engine {
   reduced = false;
   /** ?strips=off: lay strips out but never draw them (to see what they cost). */
   paused = false;
-  /** Running totals of strip redraws, pixels copied and frames held back during fast scrolls — read by the ?perf overlay. */
-  readonly stats = { draws: 0, pixels: 0, frozenFrames: 0 };
+  /** Running totals of strip redraws and pixels copied — read by the ?perf overlay. */
+  readonly stats = { draws: 0, pixels: 0 };
 
   /** Tells each strip when it comes within VIEW_MARGIN of the screen, without per-frame layout reads. */
   private readonly io: IntersectionObserver;
   private readonly watched = new WeakMap<Element, Strip>();
-  /** Touch is the primary input (iPad): strips freeze during fast scrolls. ?freeze=on|off overrides, for A/B on a device. */
-  private readonly freezeOnFastScroll = (() => {
-    const flag = new URLSearchParams(window.location.search).get("freeze");
-    return flag === "on" || (flag !== "off" && isTouchFirstDevice());
-  })();
-  private frozen = false;
 
   private paramsSig = "";
   private raf = 0;
@@ -730,20 +715,10 @@ class Engine {
       this.strips.forEach((s) => s.relayout());
     }
 
-    if (this.freezeOnFastScroll) {
-      const speed = scrollActivity.speed;
-      if (speed > FREEZE_ABOVE) this.frozen = true;
-      else if (speed < RESUME_BELOW) this.frozen = false;
-    }
-    if (this.frozen) this.stats.frozenFrames++;
-
     let again = false;
     this.strips.forEach((s) => {
       if (!s.visible) return;
-      // Held-back strips keep their last frame; the clock is wall time, so they
-      // catch up to the right place on the first frame after the flick slows. A
-      // strip that has never been drawn is exempt — it must not arrive blank.
-      if (!this.frozen || s.pending) s.frame(now);
+      s.frame(now);
       if (s.animated || s.pending) again = true;
     });
     // Nothing visible → the loop idles; a strip scrolling into range wakes it.

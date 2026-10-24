@@ -25,7 +25,6 @@ is unchanged. Use `?perf` (below) on the device to measure the rest.
 |---|---|
 | Hero clip loaded only in the page copy near the screen (`Hero.tsx`) | Loaded hero videos 12 → 4 on desktop layout, 12 → 1 on tablet/phone. Others show the poster and drop their `src`. |
 | Strip visibility via one `IntersectionObserver` (`engine.ts`) | Removes 18 `getBoundingClientRect` reads per frame (forced layout inside the scroll loop); the strip loop idles when no strip is in range. |
-| Strips hold still during fast flicks on touch devices | Above 14 px per 60 Hz frame of scroll speed the strips keep their last frame and resume below 8. Laptops (fine pointer) never do this. `?freeze=on\|off` overrides. |
 | Corporate clip re-encoded (12.4 → 6.7 MB) | crf 30 from the 1080p source; same size/duration/frames, BT.709 tags kept. |
 | Meditation clip re-encoded at native 800×450 (4.2 → 1.6 MB) | Its source is 800×450; the old 1280×720 file was an upscale. 2.5× fewer pixels to decode on the clip that is open by default. |
 | CSS strips by default on touch devices (`lib/device.ts`) | iPads, Android tablets and phones use the CSS renderer; laptops keep WebGL. On the iPad Pro's laptop layout that means ~7,600 animated letter spans across the three page copies (vs ~950 DOM nodes in total with WebGL) — chosen because the CSS version was observed to run well on the iPad. Flip back with one line in `getWordmarkEngine()`. |
@@ -39,13 +38,12 @@ Open the site with these query flags (combine with `&`):
 
 | Flag | Does |
 |---|---|
-| `?perf` | Overlay (top-left): viewport/DPR/refresh rate, fps, p95 and worst frame time, slow-frame count, strips on GL vs DOM, GL redraws/s and Mpx/s, strips held back/s, videos playing/loaded/total, scroll speed. |
+| `?perf` | Overlay (top-left): viewport/DPR/refresh rate, fps, p95 and worst frame time, slow-frame count, strips on GL vs DOM, GL redraws/s and Mpx/s, videos playing/loaded/total, scroll speed. |
 | `strips=off` | Strips laid out but never drawn. |
 | `strips=dom` | Strips on the CSS renderer (the default on iPad / touch devices). |
 | `strips=gl` | Strips on WebGL (the default on laptops) — use on an iPad to compare. |
 | `touch=on` / `touch=off` | Pretend this is / isn't a touch-first device. |
 | `videos=off` | No video plays. |
-| `freeze=on` / `freeze=off` | Force the fast-flick hold on or off. |
 
 Scroll the page the same way for each run and compare "slow" and "p95". Whichever
 flag makes them drop is what costs frames. (With nothing moving, fps just shows the
