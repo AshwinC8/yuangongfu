@@ -2,11 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import { CLASS_BOOKING_URL } from "@/lib/links";
+import { setVideoSrc } from "@/lib/shared-video";
+import { VIDEO } from "@/lib/videos";
 import styles from "./Hero.module.css";
 
 // All four panels share the SAME source clip, each cropped to fill its panel
 // (Figma FILL, centered). Swap this path to change the video.
-const HERO_VIDEO = "/videos/hero.mp4";
+const HERO_VIDEO = VIDEO.hero;
 // Still frame painted immediately (the LCP candidate) while the clip buffers.
 const HERO_POSTER = "/images/posters/hero.jpg";
 
@@ -42,7 +44,7 @@ export default function Hero() {
         const want = near && (i === 0 || !mobile.matches);
         const has = v.hasAttribute("src");
         if (want && !has) {
-          v.src = HERO_VIDEO;
+          setVideoSrc(v, HERO_VIDEO);
         } else if (!want && has) {
           v.removeAttribute("src");
           v.load(); // removing the attribute alone doesn't release the loaded media

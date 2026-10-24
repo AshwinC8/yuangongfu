@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import ownStyles from "./CrossfadeVideo.module.css";
+import { adoptSharedSrc, setVideoSrc } from "@/lib/shared-video";
 
 type Fit = "cover" | "contain";
 
@@ -67,8 +68,14 @@ export default function CrossfadeVideo({
     if (!el) return;
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) layers[activeRef.current].current?.play().catch(() => {});
-        else layers.forEach((l) => l.current?.pause());
+        if (entry.isIntersecting) {
+          const v = layers[activeRef.current].current;
+          if (v) {
+            // Not loaded yet → start from the shared, already-downloaded copy.
+            adoptSharedSrc(v, shownSrcRef.current);
+            v.play().catch(() => {});
+          }
+        } else layers.forEach((l) => l.current?.pause());
       },
       { rootMargin: "200px 0px" },
     );
@@ -87,7 +94,7 @@ export default function CrossfadeVideo({
     if (!v) return;
     let cancelled = false;
     v.pause();
-    v.src = src;
+    setVideoSrc(v, src, true);
     v.currentTime = 0;
     v.style.objectFit = fit;
     const onPlaying = () => {

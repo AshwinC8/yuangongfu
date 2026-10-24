@@ -4,6 +4,7 @@ import { useState } from "react";
 import CrossfadeVideo from "./CrossfadeVideo";
 import LoopDelayVideo from "./LoopDelayVideo";
 import styles from "./Practice.module.css";
+import { VIDEO } from "@/lib/videos";
 
 type PracticeItem = {
   title: string;
@@ -21,7 +22,7 @@ const ITEMS: PracticeItem[] = [
     body: [
       "The foundation of everything. We begin by sitting. We breathe. We notice. Meditation teaches us to observe the flow of thought without being carried away by it. This stillness becomes the ground on which transformation grows.",
     ],
-    video: "/videos/practice-meditation.mp4?v=2",
+    video: VIDEO.meditation,
     poster: "/images/posters/practice.jpg",
     ratio: "16 / 9",
   },
@@ -30,7 +31,7 @@ const ITEMS: PracticeItem[] = [
     body: [
       "The energy begins to move. In simple, graceful motions, we bring awareness into the body. We connect breath, posture, and intention — releasing tension, realigning the nervous system, and awakening a sense of quiet strength.",
     ],
-    video: "/videos/practice-qigong.mp4",
+    video: VIDEO.qigong,
     poster: "/images/posters/practice-qigong.jpg",
     ratio: "728 / 576",
   },
@@ -39,7 +40,7 @@ const ITEMS: PracticeItem[] = [
     body: [
       "The dance of opposites. Yin and yang in motion. Taijiquan brings mindfulness into more complex movements and shifting directions. It strengthens coordination, balance, and emotional regulation — all while staying rooted in the meditative state.",
     ],
-    video: "/videos/practice-taijiquan.mp4",
+    video: VIDEO.taijiquan,
     poster: "/images/posters/practice-taijiquan.jpg",
     ratio: "1104 / 968",
   },
@@ -48,7 +49,7 @@ const ITEMS: PracticeItem[] = [
     body: [
       "Form and intent become one. This explosive, internal art mirrors nature’s forces— five elements, ten animals—and develops a relaxed power known as Fa Li. Here, movement becomes expression. Intention becomes clarity.",
     ],
-    video: "/videos/practice-xingyiquan.mp4",
+    video: VIDEO.xingyiquan,
     poster: "/images/posters/practice-xingyiquan.jpg",
     ratio: "16 / 9",
   },
@@ -57,7 +58,7 @@ const ITEMS: PracticeItem[] = [
     body: [
       "Stillness under pressure. Sanda is the practical, combat-ready application of internal principles. Through strikes, projections, and movement, we challenge ourselves to remain centered even in chaos — training the body to meet life as it comes.",
     ],
-    video: "/videos/practice-sanda.mp4",
+    video: VIDEO.sanda,
     poster: "/images/posters/practice-sanda.jpg",
     ratio: "16 / 9",
   },
@@ -68,7 +69,7 @@ const ITEMS: PracticeItem[] = [
       "Alongside the internal martial arts, I guide individuals in recognizing and releasing this conditioning, allowing them to reconnect with greater clarity, freedom, and their authentic nature.",
       "This work is deeply personal and not suited to everyone. Let’s begin with a conversation to explore whether it is the right path for you.",
     ],
-    video: "/videos/healing.mp4",
+    video: VIDEO.healing,
     poster: "/images/posters/healing.jpg",
     ratio: "928 / 720",
   },

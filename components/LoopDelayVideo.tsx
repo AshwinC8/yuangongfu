@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { adoptSharedSrc } from "@/lib/shared-video";
 
 type Props = {
   src: string;
@@ -56,20 +57,24 @@ export default function LoopDelayVideo({
   // The infinite-scroll engine renders the page in triplicate, so without this
   // every off-screen copy would also download and decode. Mirrors the Hero's
   // IntersectionObserver gating (200px head start before it scrolls in).
+  // Before it plays, a clip that hasn't loaded yet is pointed at the shared,
+  // already-downloaded copy (lib/shared-video.ts) so it starts from memory.
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
     const io = new IntersectionObserver(
       ([entry]) => {
         visibleRef.current = entry.isIntersecting;
-        if (entry.isIntersecting && activeRef.current) v.play().catch(() => {});
-        else v.pause();
+        if (entry.isIntersecting && activeRef.current) {
+          adoptSharedSrc(v, src);
+          v.play().catch(() => {});
+        } else v.pause();
       },
       { rootMargin: "200px 0px" },
     );
     io.observe(v);
     return () => io.disconnect();
-  }, []);
+  }, [src]);
 
   // `active` flipping while the clip is already in view (a panel opening or
   // closing) won't fire the observer, so apply it here.
@@ -78,8 +83,11 @@ export default function LoopDelayVideo({
     const v = ref.current;
     if (!v) return;
     if (!active) v.pause();
-    else if (visibleRef.current) v.play().catch(() => {});
-  }, [active]);
+    else if (visibleRef.current) {
+      adoptSharedSrc(v, src);
+      v.play().catch(() => {});
+    }
+  }, [active, src]);
 
   return (
     <video

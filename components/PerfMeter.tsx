@@ -9,6 +9,7 @@
 import { useEffect } from "react";
 import { queryFlag } from "@/lib/perf";
 import { scrollActivity } from "@/lib/scroll-activity";
+import { sharedVideoStats } from "@/lib/shared-video";
 import { peekWordmarkEngine } from "@/lib/wordmark-gl/engine";
 
 // ?videos=off: nothing plays. Patched at import time so it is already in place
@@ -82,6 +83,7 @@ export default function PerfMeter() {
         if (v.currentSrc) loaded++;
       });
 
+      const shared = sharedVideoStats();
       const engine = peekWordmarkEngine();
       const dt = Math.max(1, now - lastAt) / 1000;
       const draws = engine ? (engine.stats.draws - lastDraws) / dt : 0;
@@ -99,7 +101,7 @@ export default function PerfMeter() {
         peakAt = now;
       }
 
-      const flags = ["strips", "videos", "freeze"]
+      const flags = ["strips", "videos", "freeze", "preload"]
         .map((f) => [f, queryFlag(f)] as const)
         .filter(([, v]) => v)
         .map(([f, v]) => `${f}=${v}`)
@@ -110,6 +112,7 @@ export default function PerfMeter() {
         `fps ${fps}   p95 ${at(0.95).toFixed(1)}ms   worst ${at(1).toFixed(0)}ms   slow ${slow}/${deltas.length}`,
         `strips gl ${gl} / dom ${strips.length - gl}   draws ${draws.toFixed(0)}/s  ${mpx.toFixed(1)} Mpx/s   held ${frozen.toFixed(0)}/s`,
         `video ${playing} playing / ${loaded} loaded / ${videos.length}`,
+        `clips downloaded ${shared.ready}/${shared.total || "-"}  ${(shared.bytes / 1048576).toFixed(1)} MB`,
         `scroll ${scrollActivity.speed.toFixed(1)} px/f   peak ${peakSpeed.toFixed(0)}`,
       ].join("\n");
     };

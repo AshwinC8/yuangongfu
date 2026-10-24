@@ -1,6 +1,7 @@
 import styles from "./Band.module.css";
 import LoopDelayVideo from "./LoopDelayVideo";
 import WordmarkStrip from "./WordmarkStrip";
+import { VIDEO } from "@/lib/videos";
 
 export default function Band() {
   return (
@@ -10,7 +11,7 @@ export default function Band() {
 
       <div className={styles.imageStrip}>
         <LoopDelayVideo
-          src="/videos/philosphy.mp4"
+          src={VIDEO.philosophy}
           poster="/images/posters/philosphy.jpg"
           className={styles.img}
         />

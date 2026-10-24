@@ -5,6 +5,7 @@
 //   ?strips=dom     wordmark strips on the CSS renderer
 //   ?strips=off     strips laid out but never drawn
 //   ?videos=off     no video ever plays
+//   ?preload=off    don't pre-download the clips; they load on demand as before
 //   ?freeze=on|off  force the "strips hold still during a fast flick" behaviour on
 //                   or off (default: on for touch devices only)
 //

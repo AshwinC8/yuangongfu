@@ -28,6 +28,7 @@ is unchanged. Use `?perf` (below) on the device to measure the rest.
 | Strips hold still during fast flicks on touch devices | Above 14 px per 60 Hz frame of scroll speed the strips keep their last frame and resume below 8. Laptops (fine pointer) never do this. `?freeze=on\|off` overrides. |
 | Corporate clip re-encoded (12.4 → 6.7 MB) | crf 30 from the 1080p source; same size/duration/frames, BT.709 tags kept. |
 | Meditation clip re-encoded at native 800×450 (4.2 → 1.6 MB) | Its source is 800×450; the old 1280×720 file was an upscale. 2.5× fewer pixels to decode on the clip that is open by default. |
+| Clips downloaded once and shared (`lib/shared-video.ts`) | After the page loads, each of the 10 clips (44 MB) is fetched once into a Blob and every `<video>` that plays it — the three page copies, Practice's side stage and its accordion panels — starts from that one `blob:` URL, so nothing waits on the network when it scrolls in. A clip that isn't downloaded yet, or whose blob fails to play, uses its normal URL. Skipped on Data Saver / 2g–3g. |
 | `?perf` meter and switches | See below. |
 
 Both re-encoded files get `?v=2` on their `src` (filenames are unhashed and cached for a day).
@@ -43,6 +44,7 @@ Open the site with these query flags (combine with `&`):
 | `strips=dom` | Strips on the CSS renderer (A/B). |
 | `videos=off` | No video plays. |
 | `freeze=on` / `freeze=off` | Force the fast-flick hold on or off. |
+| `preload=off` | Don't pre-download the clips; they load on demand, as before. |
 
 Scroll the page the same way for each run and compare "slow" and "p95". Whichever
 flag makes them drop is what costs frames. (With nothing moving, fps just shows the
@@ -57,9 +59,9 @@ display's refresh rate — the numbers are only meaningful while scrolling.)
   fast motion, so any real saving (crf 30 + 1.5 Mbit/s → 7.8 MB) softens the motion.
   Left as is. **Philosophy** (6.9 MB): the raw file is 860×484 and frames differently
   from the shipped file, so it can't be re-encoded safely from it.
-- **Unloading the other (non-hero) clips once they scroll far away.** They are
-  `preload="none"` and only fetch when played; worth doing only if the meter or a Safari
-  tab reload points at memory.
+- **Unloading clips once they scroll far away** (beyond the hero, which does). The
+  shared blobs stay in memory for the life of the page (~44 MB); worth revisiting only
+  if the meter or a Safari tab reload points at memory.
 - `public/images/{practice,about,enterprise,band}.jpg` (3.9 MB) are not referenced by
   any page and could be deleted.
 - The green "W" shape in the Xing Yi Quan clip (around 15 s, right side) is in the raw

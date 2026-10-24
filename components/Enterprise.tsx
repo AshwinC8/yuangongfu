@@ -2,6 +2,7 @@ import styles from "./Enterprise.module.css";
 import LoopDelayVideo from "./LoopDelayVideo";
 import WordmarkStrip from "./WordmarkStrip";
 import { CLASS_BOOKING_URL } from "@/lib/links";
+import { VIDEO } from "@/lib/videos";
 
 export default function Enterprise() {
   return (
@@ -54,7 +55,7 @@ export default function Enterprise() {
         <div className={styles.imageCol}>
           <LoopDelayVideo
             className={styles.image}
-            src="/videos/corporate.mp4?v=2"
+            src={VIDEO.corporate}
             poster="/images/posters/corporate.jpg"
             aria-label="Corporate wellness"
           />
