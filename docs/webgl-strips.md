@@ -25,6 +25,10 @@ picture to show.** Choosing and placing pictures is exactly what a GPU is good a
   no layout, no paint while it animates.
 - **Draw only when something moved.** During the long rest tail no group changes,
   so nothing is drawn. While a wave is on screen it redraws each frame (one draw call).
+- **Visible strips only.** One `IntersectionObserver` (one viewport of margin) tells
+  each strip whether it is in range — no per-frame layout reads — and the loop idles
+  when none is. On touch devices strips also hold their last frame during a fast
+  flick; see `ipad-performance.md` (that doc also lists the `?perf` / `?freeze` flags).
 - **Same wave, smoother.** `lib/wordmark-gl/model.ts` reproduces `ThrobKeyframe`'s
   curve and `WordmarkStripDom`'s geometry. The CSS version quantizes the curve into
   eased buckets because each change costs layout; here it's continuous. Checked

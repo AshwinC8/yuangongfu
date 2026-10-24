@@ -28,7 +28,7 @@ export default function PerfMeter() {
 
     const box = document.createElement("pre");
     box.style.cssText =
-      "position:fixed;left:8px;bottom:8px;z-index:2147483647;margin:0;padding:8px 10px;" +
+      "position:fixed;left:8px;top:88px;z-index:2147483647;margin:0;padding:8px 10px;" +
       "border-radius:8px;background:rgba(0,0,0,.82);color:#9f9;pointer-events:none;" +
       "font:11px/1.4 ui-monospace,Menlo,monospace;white-space:pre";
     document.body.appendChild(box);
