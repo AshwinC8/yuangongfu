@@ -5,6 +5,8 @@
 //   ?strips=dom     wordmark strips on the CSS renderer
 //   ?strips=off     strips laid out but never drawn
 //   ?videos=off     no video ever plays
+//   ?freeze=on|off  force the "strips hold still during a fast flick" behaviour on
+//                   or off (default: on for touch devices only)
 //
 // Combine them (?perf&strips=off) and compare the meter between runs.
 

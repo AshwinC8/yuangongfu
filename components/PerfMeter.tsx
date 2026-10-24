@@ -53,6 +53,7 @@ export default function PerfMeter() {
 
     let lastDraws = 0;
     let lastPixels = 0;
+    let lastFrozen = 0;
     let lastAt = performance.now();
 
     const render = () => {
@@ -85,9 +86,11 @@ export default function PerfMeter() {
       const dt = Math.max(1, now - lastAt) / 1000;
       const draws = engine ? (engine.stats.draws - lastDraws) / dt : 0;
       const mpx = engine ? (engine.stats.pixels - lastPixels) / dt / 1e6 : 0;
+      const frozen = engine ? (engine.stats.frozenFrames - lastFrozen) / dt : 0;
       if (engine) {
         lastDraws = engine.stats.draws;
         lastPixels = engine.stats.pixels;
+        lastFrozen = engine.stats.frozenFrames;
       }
       lastAt = now;
 
@@ -96,7 +99,7 @@ export default function PerfMeter() {
         peakAt = now;
       }
 
-      const flags = ["strips", "videos"]
+      const flags = ["strips", "videos", "freeze"]
         .map((f) => [f, queryFlag(f)] as const)
         .filter(([, v]) => v)
         .map(([f, v]) => `${f}=${v}`)
@@ -105,7 +108,7 @@ export default function PerfMeter() {
       box.textContent = [
         `${innerWidth}x${innerHeight} @${devicePixelRatio}x  ~${median ? Math.round(1000 / median) : "?"}Hz${flags ? "  " + flags : ""}`,
         `fps ${fps}   p95 ${at(0.95).toFixed(1)}ms   worst ${at(1).toFixed(0)}ms   slow ${slow}/${deltas.length}`,
-        `strips gl ${gl} / dom ${strips.length - gl}   draws ${draws.toFixed(0)}/s  ${mpx.toFixed(1)} Mpx/s`,
+        `strips gl ${gl} / dom ${strips.length - gl}   draws ${draws.toFixed(0)}/s  ${mpx.toFixed(1)} Mpx/s   held ${frozen.toFixed(0)}/s`,
         `video ${playing} playing / ${loaded} loaded / ${videos.length}`,
         `scroll ${scrollActivity.speed.toFixed(1)} px/f   peak ${peakSpeed.toFixed(0)}`,
       ].join("\n");
