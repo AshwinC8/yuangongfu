@@ -123,7 +123,7 @@
   max-width: 520px;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1300px) {
   .practice {
     padding: 56px 0;
   }
@@ -154,7 +154,7 @@
 /* Tablet: shrink the in-panel clip and run the text beside it, so title,
    clip and copy read together. Below the lower bound the text column gets too
    narrow to read, so it falls back to the stacked layout above. */
-@media (min-width: 600px) and (max-width: 1400px) {
+@media (min-width: 600px) and (max-width: 1300px) {
   .panelInner {
     display: grid;
     grid-template-columns: clamp(240px, 40%, 380px) 1fr;

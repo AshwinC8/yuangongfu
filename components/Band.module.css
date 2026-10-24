@@ -34,7 +34,7 @@
    only reveals more of the clip (the zoom is fixed by the width needed to hide
    the side bars). The figure on the stump spans ~39–68% of the picture's
    height; 56% centres the crop on it across tablet/phone widths. */
-@media (max-width: 1400px) {
+@media (max-width: 1300px) {
   .wrapper {
     margin-top: 48px;
   }

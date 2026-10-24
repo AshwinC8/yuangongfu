@@ -23,13 +23,14 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  // Desktop runs the staggered four-panel composition; tablet/mobile (≤1400px,
-  // covering iPad Pro landscape) show only panel 1 (CSS hides 2–4), so there
+  // Desktop runs the staggered four-panel composition (>1300px, which includes
+  // the 12.9"/13" iPad Pro in landscape); tablet/mobile (≤1300px) show only
+  // panel 1 (CSS hides 2–4), so there
   // the master clock's per-panel stagger and end-of-clip LOOP_DELAY gap are
   // just dead air. We pick the mode from matchMedia and re-pick on change so
   // a resize swaps behaviour cleanly.
   useEffect(() => {
-    const mobileQuery = window.matchMedia("(max-width: 1400px)");
+    const mobileQuery = window.matchMedia("(max-width: 1300px)");
 
     // One master clock drives all four panels. Every frame we compute where each
     // clip *should* be (cycle = clip length + LOOP_DELAY_MS, panel i offset by

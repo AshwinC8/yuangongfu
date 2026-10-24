@@ -65,7 +65,7 @@
   align-self: stretch;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1300px) {
 
   /* Flex column instead of grid: the image holds a real 320px box in the flow
      (the video inside is absolute, so a grid row with align-items:start
