@@ -16,6 +16,7 @@
 // so weight and push are continuous rather than stepped. If no group moved since
 // the last draw (the long rest tail), nothing is drawn at all.
 
+import { isTouchFirstDevice } from "../device";
 import { scrollActivity } from "../scroll-activity";
 import { buildAtlas, type Atlas } from "./atlas";
 import {
@@ -544,7 +545,7 @@ class Engine {
   /** Touch is the primary input (iPad): strips freeze during fast scrolls. ?freeze=on|off overrides, for A/B on a device. */
   private readonly freezeOnFastScroll = (() => {
     const flag = new URLSearchParams(window.location.search).get("freeze");
-    return flag === "on" || (flag !== "off" && window.matchMedia("(pointer: coarse)").matches);
+    return flag === "on" || (flag !== "off" && isTouchFirstDevice());
   })();
   private frozen = false;
 
@@ -758,10 +759,12 @@ let engine: Engine | null | undefined;
 export function getWordmarkEngine(): Engine | null {
   if (engine !== undefined) return engine;
   try {
-    // ?strips=dom forces the CSS renderer, for A/B comparison; ?strips=off keeps
-    // the layout but draws nothing, to measure what the strips cost.
+    // Laptops (GPU, mouse/trackpad) get WebGL; touch tablets and phones get the CSS
+    // renderer by default. ?strips=dom forces CSS and ?strips=gl forces WebGL on any
+    // device, for A/B comparison; ?strips=off keeps the layout but draws nothing,
+    // to measure what the strips cost.
     const mode = new URLSearchParams(window.location.search).get("strips");
-    if (mode === "dom") {
+    if (mode === "dom" || (mode === null && isTouchFirstDevice())) {
       engine = null;
     } else {
       engine = new Engine();

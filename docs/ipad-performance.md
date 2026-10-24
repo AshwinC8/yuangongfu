@@ -28,6 +28,7 @@ is unchanged. Use `?perf` (below) on the device to measure the rest.
 | Strips hold still during fast flicks on touch devices | Above 14 px per 60 Hz frame of scroll speed the strips keep their last frame and resume below 8. Laptops (fine pointer) never do this. `?freeze=on\|off` overrides. |
 | Corporate clip re-encoded (12.4 → 6.7 MB) | crf 30 from the 1080p source; same size/duration/frames, BT.709 tags kept. |
 | Meditation clip re-encoded at native 800×450 (4.2 → 1.6 MB) | Its source is 800×450; the old 1280×720 file was an upscale. 2.5× fewer pixels to decode on the clip that is open by default. |
+| CSS strips by default on touch devices (`lib/device.ts`) | iPads, Android tablets and phones use the CSS renderer; laptops keep WebGL. On the iPad Pro's laptop layout that means ~7,600 animated letter spans across the three page copies (vs ~950 DOM nodes in total with WebGL) — chosen because the CSS version was observed to run well on the iPad. Flip back with one line in `getWordmarkEngine()`. |
 | `?perf` meter and switches | See below. |
 
 Both re-encoded files get `?v=2` on their `src` (filenames are unhashed and cached for a day).
@@ -40,7 +41,9 @@ Open the site with these query flags (combine with `&`):
 |---|---|
 | `?perf` | Overlay (top-left): viewport/DPR/refresh rate, fps, p95 and worst frame time, slow-frame count, strips on GL vs DOM, GL redraws/s and Mpx/s, strips held back/s, videos playing/loaded/total, scroll speed. |
 | `strips=off` | Strips laid out but never drawn. |
-| `strips=dom` | Strips on the CSS renderer (A/B). |
+| `strips=dom` | Strips on the CSS renderer (the default on iPad / touch devices). |
+| `strips=gl` | Strips on WebGL (the default on laptops) — use on an iPad to compare. |
+| `touch=on` / `touch=off` | Pretend this is / isn't a touch-first device. |
 | `videos=off` | No video plays. |
 | `freeze=on` / `freeze=off` | Force the fast-flick hold on or off. |
 

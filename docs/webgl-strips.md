@@ -61,8 +61,13 @@ Each strip stays its own compositor layer, so scrolling is still a pure GPU slid
 
 ## A/B testing
 
-- Default → WebGL. Open DevTools console: `[wordmark-gl] WebGL2 strips active — <your GPU>`.
-- `?strips=dom` → the original CSS renderer, same page, same build.
+- Default on a laptop/desktop → WebGL. Open DevTools console: `[wordmark-gl] WebGL2 strips active — <your GPU>`.
+- Default on a touch-first device (iPad, Android tablet, phone — `lib/device.ts`) → the
+  CSS renderer, because the tablet's CPU/compositor handled it well and WebGL's win is
+  on GPU laptops.
+- `?strips=dom` → the original CSS renderer on any device, same page, same build.
+- `?strips=gl` → WebGL on any device (e.g. an iPad, to compare). `?touch=on|off` pretends
+  the device is / isn't touch-first.
 - Inspect a strip: `data-renderer="gl"` or `"dom"` on its container.
 - If you see `falling back to DOM strips:` in the console, GL rejected itself
   (no WebGL2, software rasterizer, or the canvas text didn't match the DOM) — the
