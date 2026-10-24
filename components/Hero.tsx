@@ -23,6 +23,51 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
+  // The infinite-scroll track renders three Heroes but only one is ever near the
+  // screen, so only that copy gets the clip: 4 videos loaded instead of 12. On an
+  // iPad every loaded <video> holds a decoder + buffer even while paused. The
+  // others show the poster and drop their src again once they scroll far away.
+  // (Registered before the playback effect below so, when both observers fire in
+  // the same frame, the src is already set by the time play() is called.)
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const mobile = window.matchMedia("(max-width: 1300px)");
+    let near = false;
+
+    const apply = () => {
+      videoRefs.current.forEach((v, i) => {
+        if (!v) return;
+        // At tablet/mobile widths CSS hides panels 2–4, so they never need the clip.
+        const want = near && (i === 0 || !mobile.matches);
+        const has = v.hasAttribute("src");
+        if (want && !has) {
+          v.src = HERO_VIDEO;
+        } else if (!want && has) {
+          v.removeAttribute("src");
+          v.load(); // removing the attribute alone doesn't release the loaded media
+        }
+      });
+    };
+
+    // A full viewport of margin: the clip is fetched well before it's needed
+    // (the playback loop below only starts within 200px).
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        near = entry.isIntersecting;
+        apply();
+      },
+      { rootMargin: "100% 0px" },
+    );
+    io.observe(section);
+    mobile.addEventListener("change", apply);
+
+    return () => {
+      io.disconnect();
+      mobile.removeEventListener("change", apply);
+    };
+  }, []);
+
   // Desktop runs the staggered four-panel composition (>1300px, which includes
   // the 12.9"/13" iPad Pro in landscape); tablet/mobile (≤1300px) show only
   // panel 1 (CSS hides 2–4), so there
@@ -154,9 +199,19 @@ export default function Hero() {
       if (!v) return () => { };
       v.loop = true;
 
+      // The clip's src is attached lazily (effect above), so on a copy that just
+      // scrolled near, play() can run before there is anything to play. Start it
+      // again once the metadata arrives.
+      let visible = false;
+      const onReady = () => {
+        if (visible) v.play().catch(() => { });
+      };
+      v.addEventListener("loadedmetadata", onReady);
+
       const io = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting) v.play().catch(() => { });
+          visible = entry.isIntersecting;
+          if (visible) v.play().catch(() => { });
           else v.pause();
         },
         { rootMargin: "200px 0px" },
@@ -166,6 +221,7 @@ export default function Hero() {
 
       return () => {
         io.disconnect();
+        v.removeEventListener("loadedmetadata", onReady);
         v.loop = false;
         v.pause();
       };
@@ -194,7 +250,6 @@ export default function Hero() {
                 ref={(el) => {
                   videoRefs.current[i] = el;
                 }}
-                src={HERO_VIDEO}
                 poster={HERO_POSTER}
                 muted
                 playsInline
