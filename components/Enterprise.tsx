@@ -54,7 +54,7 @@ export default function Enterprise() {
         <div className={styles.imageCol}>
           <LoopDelayVideo
             className={styles.image}
-            src="/videos/corporate.mp4"
+            src="/videos/corporate.mp4?v=2"
             poster="/images/posters/corporate.jpg"
             aria-label="Corporate wellness"
           />

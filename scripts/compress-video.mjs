@@ -4,7 +4,7 @@
 // CrossfadeVideo / Hero, which all render `muted`).
 //
 // Usage:
-//   node scripts/compress-video.mjs <input> <output.mp4> [--max-width=1280]
+//   node scripts/compress-video.mjs <input> <output.mp4> [--max-width=1280] [--crf=26] [--preset=medium] [--maxrate=2000]
 //
 // Example:
 //   node scripts/compress-video.mjs raw-videos/Corporate.MOV public/videos/corporate.mp4
@@ -15,7 +15,7 @@ import { existsSync } from "node:fs";
 const [, , input, output, ...rest] = process.argv;
 
 if (!input || !output) {
-  console.error("Usage: node scripts/compress-video.mjs <input> <output.mp4> [--max-width=1280]");
+  console.error("Usage: node scripts/compress-video.mjs <input> <output.mp4> [--max-width=1280] [--crf=26] [--preset=medium] [--maxrate=2000]");
   process.exit(1);
 }
 if (!existsSync(input)) {
@@ -25,6 +25,13 @@ if (!existsSync(input)) {
 
 const maxWidthArg = rest.find((a) => a.startsWith("--max-width="));
 const maxWidth = maxWidthArg ? Number(maxWidthArg.split("=")[1]) : 1280;
+
+// Quality knobs. Defaults are what every shipped clip used up to now; raise --crf
+// (or lower --maxrate, in kbit/s) to trade a little sharpness for smaller files.
+const opt = (name, fallback) => rest.find((a) => a.startsWith(`--${name}=`))?.split("=")[1] ?? fallback;
+const crf = opt("crf", "26");
+const preset = opt("preset", "medium");
+const maxrate = Number(opt("maxrate", "2000"));
 
 // Only downscale, never upscale; keep even dimensions (required by yuv420p).
 const scaleFilter = `scale='min(${maxWidth},iw)':-2`;
@@ -57,12 +64,12 @@ const args = [
   "-i", input,
   "-vf", videoFilter,
   "-c:v", "libx264",
-  "-preset", "medium",
-  "-crf", "26",
+  "-preset", preset,
+  "-crf", crf,
   // Cap peak bitrate — these are small, muted, non-focal background loops,
   // so busy/high-motion footage doesn't need CRF's uncapped bitrate spikes.
-  "-maxrate", "2000k",
-  "-bufsize", "4000k",
+  "-maxrate", `${maxrate}k`,
+  "-bufsize", `${maxrate * 2}k`,
   "-pix_fmt", "yuv420p",
   "-colorspace", "bt709",
   "-color_primaries", "bt709",
@@ -77,5 +84,5 @@ const args = [
   output,
 ];
 
-console.log(`Compressing ${input} -> ${output} (max width ${maxWidth}px)`);
+console.log(`Compressing ${input} -> ${output} (max width ${maxWidth}px, crf ${crf}, preset ${preset}, maxrate ${maxrate}k)`);
 execFileSync("ffmpeg", args, { stdio: "inherit" });

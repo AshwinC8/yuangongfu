@@ -21,7 +21,7 @@ const ITEMS: PracticeItem[] = [
     body: [
       "The foundation of everything. We begin by sitting. We breathe. We notice. Meditation teaches us to observe the flow of thought without being carried away by it. This stillness becomes the ground on which transformation grows.",
     ],
-    video: "/videos/practice-meditation.mp4",
+    video: "/videos/practice-meditation.mp4?v=2",
     poster: "/images/posters/practice.jpg",
     ratio: "16 / 9",
   },
