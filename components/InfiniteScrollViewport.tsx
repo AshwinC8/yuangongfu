@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { ScrollContext, type ScrollSubscriber, type ScrollState } from "@/lib/scroll-context";
+import { reportScrollSpeed } from "@/lib/scroll-activity";
 
 type Props = {
   numCopies?: number;
@@ -183,6 +184,7 @@ export default function InfiniteScrollViewport({
       lastScroll.current = cs.current;
       const vAlpha = 1 - Math.exp(-dt / 100);
       velocity.current = settled ? 0 : velocity.current + (rawV - velocity.current) * vAlpha;
+      reportScrollSpeed(velocity.current);
 
       // Snap to device pixels — fractional offsets force the GPU to resample
       // the whole visible layer every frame and make text shimmer.

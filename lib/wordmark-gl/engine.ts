@@ -476,6 +476,8 @@ class Strip implements StripHandle {
     if (canvas.style.top !== topCss) canvas.style.top = topCss;
     this.ctx2d.globalCompositeOperation = "copy";
     this.ctx2d.drawImage(e.canvas, 0, 0, pw, ph, 0, 0, pw, ph);
+    e.stats.draws++;
+    e.stats.pixels += pw * ph;
   }
 
   /** Context was restored: GL objects are gone, redraw everything. */
@@ -517,6 +519,10 @@ class Engine {
   /** Animation clock origin (ms). Reset when the throb config changes, like ThrobKeyframe's restart. */
   epoch = performance.now();
   reduced = false;
+  /** ?strips=off: lay strips out but never draw them (to see what they cost). */
+  paused = false;
+  /** Running totals of strip redraws and pixels copied — read by the ?perf overlay. */
+  readonly stats = { draws: 0, pixels: 0 };
 
   private paramsSig = "";
   private raf = 0;
@@ -671,7 +677,7 @@ class Engine {
 
   private tick = (now: number) => {
     this.raf = 0;
-    if (this.lost || this.strips.size === 0) return;
+    if (this.paused || this.lost || this.strips.size === 0) return;
 
     // Zoom or a move to another monitor changes the pixel ratio without
     // necessarily resizing any strip, so check explicitly.
@@ -700,17 +706,25 @@ let engine: Engine | null | undefined;
 export function getWordmarkEngine(): Engine | null {
   if (engine !== undefined) return engine;
   try {
-    // ?strips=dom forces the CSS renderer, for A/B comparison.
-    if (new URLSearchParams(window.location.search).get("strips") === "dom") {
+    // ?strips=dom forces the CSS renderer, for A/B comparison; ?strips=off keeps
+    // the layout but draws nothing, to measure what the strips cost.
+    const mode = new URLSearchParams(window.location.search).get("strips");
+    if (mode === "dom") {
       engine = null;
     } else {
       engine = new Engine();
+      engine.paused = mode === "off";
     }
   } catch (err) {
     console.warn("[wordmark-gl] WebGL unavailable, using DOM strips:", err);
     engine = null;
   }
   return engine;
+}
+
+/** The engine if one has been created — never creates it (for the ?perf overlay). */
+export function peekWordmarkEngine(): Engine | null {
+  return engine ?? null;
 }
 
 export type { Engine };
