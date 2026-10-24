@@ -1,8 +1,9 @@
 "use client";
-// Entry point for the YUANGONGFU wordmark pattern. Renders on the GPU
-// (WordmarkStripGL) and falls back to the CSS/DOM renderer (WordmarkStripDom)
-// when WebGL2 is unavailable, the glyph atlas can't be built faithfully, or the
-// page is opened with ?strips=dom (handy for A/B comparison).
+// Entry point for the YUANGONGFU wordmark pattern. Laptops render it on the GPU
+// (WordmarkStripGL); touch tablets and phones use the CSS/DOM renderer
+// (WordmarkStripDom) by default — see lib/device.ts. The CSS renderer is also the
+// fallback when WebGL2 is unavailable or the glyph atlas can't be built faithfully.
+// ?strips=dom / ?strips=gl force either renderer on any device (handy for A/B).
 
 import { useCallback, useState } from "react";
 import WordmarkStripDom, { type Props } from "./WordmarkStripDom";

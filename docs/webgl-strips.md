@@ -27,8 +27,7 @@ picture to show.** Choosing and placing pictures is exactly what a GPU is good a
   so nothing is drawn. While a wave is on screen it redraws each frame (one draw call).
 - **Visible strips only.** One `IntersectionObserver` (one viewport of margin) tells
   each strip whether it is in range — no per-frame layout reads — and the loop idles
-  when none is. On touch devices strips also hold their last frame during a fast
-  flick; see `ipad-performance.md` (that doc also lists the `?perf` / `?freeze` flags).
+  when none is. See `ipad-performance.md` for the `?perf` meter and the other flags.
 - **Same wave, smoother.** `lib/wordmark-gl/model.ts` reproduces `ThrobKeyframe`'s
   curve and `WordmarkStripDom`'s geometry. The CSS version quantizes the curve into
   eased buckets because each change costs layout; here it's continuous. Checked
@@ -61,8 +60,13 @@ Each strip stays its own compositor layer, so scrolling is still a pure GPU slid
 
 ## A/B testing
 
-- Default → WebGL. Open DevTools console: `[wordmark-gl] WebGL2 strips active — <your GPU>`.
-- `?strips=dom` → the original CSS renderer, same page, same build.
+- Default on a laptop/desktop → WebGL. Open DevTools console: `[wordmark-gl] WebGL2 strips active — <your GPU>`.
+- Default on a touch-first device (iPad, Android tablet, phone — `lib/device.ts`) → the
+  CSS renderer, because the tablet's CPU/compositor handled it well and WebGL's win is
+  on GPU laptops.
+- `?strips=dom` → the original CSS renderer on any device, same page, same build.
+- `?strips=gl` → WebGL on any device (e.g. an iPad, to compare). `?touch=on|off` pretends
+  the device is / isn't touch-first.
 - Inspect a strip: `data-renderer="gl"` or `"dom"` on its container.
 - If you see `falling back to DOM strips:` in the console, GL rejected itself
   (no WebGL2, software rasterizer, or the canvas text didn't match the DOM) — the
