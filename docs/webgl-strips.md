@@ -31,8 +31,11 @@ picture to show.** Choosing and placing pictures is exactly what a GPU is good a
   against the real keyframe generator: the smooth curve stays within one bucket-step
   of the CSS value everywhere (240k samples) and peak/rest are exact.
 - **Exact metrics.** Advance widths (the "bold letters push their neighbours"
-  effect) and the baseline are measured from real DOM layout, not estimated.
-  Canvas only draws the ink.
+  effect), each letter's position (kerning and letter-spacing included) and the
+  baseline are measured from real DOM layout, not estimated. Canvas only draws the
+  ink, one letter at a time at those positions — so it needs no canvas
+  `letterSpacing` (Safari 18.4+ only) and works on older iPads. Drawing this way
+  produced an atlas pixel-identical to the `letterSpacing` version in Chrome.
 
 ## Why one shared WebGL context
 

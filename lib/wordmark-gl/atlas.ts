@@ -2,14 +2,17 @@
 //
 // One cell per (letter group × weight bucket), pre-rasterized once with the
 // page's real display font. Two sources of truth, deliberately split:
-//   • advance widths + baseline come from the DOM (getBoundingClientRect on the
-//     same styles the CSS renderer uses), so the "bolder letters push their
-//     neighbours" effect and the vertical placement match the DOM exactly;
-//   • only the ink is drawn on a 2D canvas, using font-weight (which maps onto
-//     the 'wght' axis because the @font-face declares a 100–900 range).
+//   • advance widths, per-letter positions and the baseline come from the DOM
+//     (getBoundingClientRect / Range rects on the same styles the CSS renderer
+//     uses), so the "bolder letters push their neighbours" effect, kerning,
+//     letter-spacing and vertical placement match the DOM exactly;
+//   • only the ink is drawn on a 2D canvas, one letter at a time at those DOM
+//     positions, using font-weight (which maps onto the 'wght' axis because the
+//     @font-face declares a 100–900 range). Drawing letter-by-letter means no
+//     canvas letterSpacing is needed — that API only exists in Safari 18.4+.
 // A width cross-check at build time throws if the canvas disagrees with the DOM
-// (weight not mapped, letterSpacing unsupported…), and the caller falls back to
-// the DOM renderer rather than showing wrong glyphs.
+// (weight axis not applied…), and the caller falls back to the DOM renderer
+// rather than showing wrong glyphs.
 
 import { STATIC_COLUMN } from "./model";
 
@@ -41,8 +44,6 @@ type BuildOptions = {
   maxTexture: number;
 };
 
-type TextCtx = CanvasRenderingContext2D & { letterSpacing: string; fontKerning: string };
-
 const LETTER_SPACING_EM = 0.02; // must match rowStyle in WordmarkStripDom
 
 export async function buildAtlas(o: BuildOptions): Promise<Atlas> {
@@ -58,7 +59,7 @@ export async function buildAtlas(o: BuildOptions): Promise<Atlas> {
   await Promise.all([document.fonts.load(spec(weights[0])), document.fonts.load(spec(Math.max(...weights)))]);
   await document.fonts.ready;
 
-  const { advance, baseline } = measureInDom(container, family, fontSize, strings, weights);
+  const { advance, charX, baseline } = measureInDom(container, family, fontSize, strings, weights);
 
   // ── Cell geometry ────────────────────────────────────────────────
   let maxAdv = 0;
@@ -79,15 +80,12 @@ export async function buildAtlas(o: BuildOptions): Promise<Atlas> {
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
-  const ctx = canvas.getContext("2d") as TextCtx | null;
+  const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("2D canvas unavailable");
-  if (!("letterSpacing" in ctx)) throw new Error("canvas letterSpacing unsupported");
 
   ctx.fillStyle = "#000";
   ctx.textBaseline = "alphabetic";
   ctx.textAlign = "left";
-  ctx.fontKerning = "auto";
-  ctx.letterSpacing = `${LETTER_SPACING_EM * fontSize * ratio}px`;
 
   const baseY = Math.round(baseline * ratio);
   for (let s = 0; s < strings.length; s++) {
@@ -100,19 +98,26 @@ export async function buildAtlas(o: BuildOptions): Promise<Atlas> {
       ctx.rect(cx, cy, cellW, cellH); // the DOM clips each row to its box too
       ctx.clip();
       ctx.font = `${weights[j]} ${fontSize * ratio}px ${family}`;
-      ctx.fillText(strings[s], cx + padPx, cy + baseY);
+      // One letter at a time, at the x the DOM laid it out (kerning and
+      // letter-spacing already included in those offsets).
+      const text = strings[s];
+      const xs = charX[cell];
+      for (let c = 0; c < text.length; c++) {
+        ctx.fillText(text[c], cx + padPx + xs[c] * ratio, cy + baseY);
+      }
       ctx.restore();
     }
   }
 
   // ── Cross-check canvas vs DOM ────────────────────────────────────
   // Widest weight, first string: if canvas text metrics don't track the DOM's,
-  // the weight axis isn't being applied (or spacing differs) and the atlas
-  // would show the wrong glyphs.
+  // the weight axis isn't being applied and the atlas would show the wrong
+  // glyphs. The DOM width includes letter-spacing after every letter; the
+  // canvas measure (no letterSpacing set) doesn't, so take it out.
   const probeCol = columns - 2; // widest animated bucket
   ctx.font = `${weights[probeCol]} ${fontSize * ratio}px ${family}`;
   const canvasW = ctx.measureText(strings[0]).width / ratio;
-  const domW = advance[probeCol];
+  const domW = advance[probeCol] - strings[0].length * LETTER_SPACING_EM * fontSize;
   if (Math.abs(canvasW - domW) > Math.max(1.5, domW * 0.03)) {
     throw new Error(`canvas/DOM text width mismatch (canvas ${canvasW.toFixed(2)}px vs DOM ${domW.toFixed(2)}px)`);
   }
@@ -131,15 +136,16 @@ function resolveFamily(container: HTMLElement): string {
   return family;
 }
 
-// Measures every (string, weight) advance and the row baseline with real DOM
-// layout — one forced layout for all of it.
+// Measures every (string, weight) advance, each letter's left edge inside its
+// string, and the row baseline with real DOM layout — one forced layout for all
+// of it. Indexed [stringId * weights.length + column], like the atlas cells.
 function measureInDom(
   container: HTMLElement,
   family: string,
   fontSize: number,
   strings: string[],
   weights: number[],
-): { advance: Float32Array; baseline: number } {
+): { advance: Float32Array; charX: number[][]; baseline: number } {
   const host = document.createElement("div");
   const s = host.style;
   s.position = "absolute";
@@ -176,9 +182,24 @@ function measureInDom(
 
   container.appendChild(host);
   const advance = new Float32Array(spans.length);
-  for (let i = 0; i < spans.length; i++) advance[i] = spans[i].getBoundingClientRect().width;
+  const charX: number[][] = [];
+  const range = document.createRange();
+  for (let i = 0; i < spans.length; i++) {
+    const rect = spans[i].getBoundingClientRect();
+    advance[i] = rect.width;
+    // A Range over one character gives that glyph's box as the browser shaped it
+    // (kerning applied), so its left edge is where the letter is drawn.
+    const node = spans[i].firstChild as Text;
+    const xs: number[] = [];
+    for (let c = 0; c < node.length; c++) {
+      range.setStart(node, c);
+      range.setEnd(node, c + 1);
+      xs.push(range.getBoundingClientRect().left - rect.left);
+    }
+    charX.push(xs);
+  }
   const baseline = marker.getBoundingClientRect().bottom - line.getBoundingClientRect().top;
   host.remove();
 
-  return { advance, baseline };
+  return { advance, charX, baseline };
 }
